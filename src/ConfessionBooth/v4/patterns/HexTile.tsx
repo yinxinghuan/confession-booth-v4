@@ -1,15 +1,14 @@
-// Hexagon tile pattern — flat-colored honeycomb with optional alternating
-// secondary color for pop. Used as a textural backdrop band.
+// Pointy-top hexagon tile pattern — actually visible, two-color
+// alternating. Used as divider / accent band.
 
 interface Props {
   width?: number | string;
   height?: number | string;
   className?: string;
   color?: string;
-  bg?: string;
-  /** alternate color (every other tile) */
   altColor?: string;
-  /** hex cell radius */
+  bg?: string;
+  /** hex circumradius in svg user-space units */
   r?: number;
 }
 
@@ -18,39 +17,41 @@ export default function HexTile({
   height = '100%',
   className,
   color = '#ffd24a',
+  altColor = '#ff7a4a',
   bg = '#0a0a0a',
-  altColor,
-  r = 22,
+  r = 16,
 }: Props) {
-  // Hex point coordinates (flat-top hexagon)
+  // Pointy-top hex: width = sqrt(3)*r, height = 2*r
   const sqrt3 = Math.sqrt(3);
-  const stepX = r * 1.5;
-  const stepY = r * sqrt3;
+  const hexW = sqrt3 * r;
+  const hexH = 2 * r;
+  const rowStep = hexH * 0.75; // vertical step between rows
+  const vbW = 320;
+  const vbH = 80;
+  const cols = Math.ceil(vbW / hexW) + 2;
+  const rows = Math.ceil(vbH / rowStep) + 2;
 
-  const cols = Math.ceil(360 / stepX) + 2;
-  const rows = Math.ceil(360 / stepY) + 2;
-
-  const hex = (cx: number, cy: number) =>
-    `M ${cx - r} ${cy} L ${cx - r / 2} ${cy - (r * sqrt3) / 2} L ${cx + r / 2} ${cy - (r * sqrt3) / 2} L ${cx + r} ${cy} L ${cx + r / 2} ${cy + (r * sqrt3) / 2} L ${cx - r / 2} ${cy + (r * sqrt3) / 2} Z`;
+  const hexPath = (cx: number, cy: number) =>
+    `M ${cx} ${cy - r} L ${cx + hexW / 2} ${cy - r / 2} L ${cx + hexW / 2} ${cy + r / 2} L ${cx} ${cy + r} L ${cx - hexW / 2} ${cy + r / 2} L ${cx - hexW / 2} ${cy - r / 2} Z`;
 
   return (
     <svg
       className={className}
       width={width}
       height={height}
-      viewBox="0 0 360 360"
+      viewBox={`0 0 ${vbW} ${vbH}`}
       preserveAspectRatio="xMidYMid slice"
       aria-hidden
       style={{ display: 'block' }}
     >
-      <rect width="360" height="360" fill={bg} />
+      <rect width={vbW} height={vbH} fill={bg} />
       <g>
         {Array.from({ length: rows }).map((_, row) =>
           Array.from({ length: cols }).map((_, col) => {
-            const cx = col * stepX;
-            const cy = row * stepY + (col % 2 ? stepY / 2 : 0);
-            const useAlt = altColor && (row + col) % 2 === 0;
-            return <path key={`${row}-${col}`} d={hex(cx, cy)} fill={useAlt ? altColor : color} />;
+            const cx = col * hexW + (row % 2 ? hexW / 2 : 0);
+            const cy = row * rowStep;
+            const useAlt = (row + col) % 2 === 0;
+            return <path key={`${row}-${col}`} d={hexPath(cx, cy)} fill={useAlt ? color : altColor} />;
           }),
         )}
       </g>
