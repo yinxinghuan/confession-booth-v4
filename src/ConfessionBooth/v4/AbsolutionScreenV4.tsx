@@ -96,27 +96,22 @@ export default function AbsolutionScreenV4({ confession, onAnother, onWall, slam
         </div>
       </section>
 
-      {/* Below the arc: operator reply + penance */}
+      {/* Below the arc: operator reply (one continuous paragraph) + penance */}
       <section className="cb4-abs__below">
         <div className="cb4-abs__reply">
           <span className="cb4-abs__section-label">{t('abs_reply')}</span>
-          {replyLines.map((line, i) => (
-            <Pill
-              key={i}
-              variant={i % 2 === 0 ? 'cream' : 'yellow'}
-              size="sm"
-              className="cb4-abs__reply-line"
-            >
-              {line}
-            </Pill>
-          ))}
+          <div className="cb4-abs__reply-bubble">
+            {replyLines.map((line, i) => (
+              <p key={i} className="cb4-abs__reply-line">{line}</p>
+            ))}
+          </div>
         </div>
 
         <div className="cb4-abs__penance">
           <span className="cb4-abs__section-label">{t('abs_penance')}</span>
-          <Pill variant="coral" size="md" className="cb4-abs__penance-pill">
+          <div className="cb4-abs__penance-pill">
             {confession.penance}
-          </Pill>
+          </div>
         </div>
       </section>
 

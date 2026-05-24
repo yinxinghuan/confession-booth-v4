@@ -14,39 +14,16 @@ const MAX = 280;
 type PromptChip = { text: string; variant: 'pink' | 'cream' | 'teal' | 'coral' | 'yellow' | 'lavender' };
 type PromptRow = { chips: PromptChip[]; arrow?: boolean };
 
+// One short prompt row only — leaves the textarea as the visual focus
 const PROMPT_ROWS: Record<string, PromptRow[]> = {
-  en: [
-    { chips: [{ text: 'WHISPER', variant: 'cream' }, { text: 'YOUR', variant: 'pink' }, { text: 'SIN', variant: 'cream' }] },
-    { arrow: true, chips: [{ text: 'INTO', variant: 'cream' }, { text: 'A', variant: 'yellow' }, { text: 'BORED OPERATOR', variant: 'cream' }] },
-  ],
-  zh: [
-    { chips: [{ text: '把', variant: 'cream' }, { text: '你的', variant: 'pink' }, { text: '罪', variant: 'cream' }] },
-    { arrow: true, chips: [{ text: '告诉', variant: 'cream' }, { text: '一个', variant: 'yellow' }, { text: '夜班接线员', variant: 'cream' }] },
-  ],
-  es: [
-    { chips: [{ text: 'SUSURRA', variant: 'cream' }, { text: 'TU', variant: 'pink' }, { text: 'PECADO', variant: 'cream' }] },
-    { arrow: true, chips: [{ text: 'A UN', variant: 'cream' }, { text: 'OPERADOR', variant: 'yellow' }, { text: 'CANSADO', variant: 'cream' }] },
-  ],
-  pt: [
-    { chips: [{ text: 'SUSSURRE', variant: 'cream' }, { text: 'SEU', variant: 'pink' }, { text: 'PECADO', variant: 'cream' }] },
-    { arrow: true, chips: [{ text: 'A UM', variant: 'cream' }, { text: 'OPERADOR', variant: 'yellow' }, { text: 'CANSADO', variant: 'cream' }] },
-  ],
-  ru: [
-    { chips: [{ text: 'ШЕПНИ', variant: 'cream' }, { text: 'СВОЙ', variant: 'pink' }, { text: 'ГРЕХ', variant: 'cream' }] },
-    { arrow: true, chips: [{ text: 'УСТАЛОМУ', variant: 'cream' }, { text: 'ОПЕРАТОРУ', variant: 'yellow' }] },
-  ],
-  ja: [
-    { chips: [{ text: 'あなたの', variant: 'cream' }, { text: '罪を', variant: 'pink' }] },
-    { arrow: true, chips: [{ text: '疲れた', variant: 'cream' }, { text: 'オペレーターへ', variant: 'yellow' }] },
-  ],
-  ko: [
-    { chips: [{ text: '당신의', variant: 'cream' }, { text: '죄를', variant: 'pink' }] },
-    { arrow: true, chips: [{ text: '지친', variant: 'cream' }, { text: '상담원에게', variant: 'yellow' }] },
-  ],
-  fr: [
-    { chips: [{ text: 'CHUCHOTE', variant: 'cream' }, { text: 'TON', variant: 'pink' }, { text: 'PÉCHÉ', variant: 'cream' }] },
-    { arrow: true, chips: [{ text: 'À UN', variant: 'cream' }, { text: 'OPÉRATEUR', variant: 'yellow' }, { text: 'FATIGUÉ', variant: 'cream' }] },
-  ],
+  en: [{ chips: [{ text: 'WHISPER', variant: 'pink' }, { text: 'YOUR SIN', variant: 'cream' }] }],
+  zh: [{ chips: [{ text: '低声', variant: 'pink' }, { text: '告诉我', variant: 'cream' }] }],
+  es: [{ chips: [{ text: 'SUSURRA', variant: 'pink' }, { text: 'TU PECADO', variant: 'cream' }] }],
+  pt: [{ chips: [{ text: 'SUSSURRE', variant: 'pink' }, { text: 'SEU PECADO', variant: 'cream' }] }],
+  ru: [{ chips: [{ text: 'ШЕПНИ', variant: 'pink' }, { text: 'СВОЙ ГРЕХ', variant: 'cream' }] }],
+  ja: [{ chips: [{ text: 'ささやけ', variant: 'pink' }, { text: 'あなたの罪を', variant: 'cream' }] }],
+  ko: [{ chips: [{ text: '속삭여라', variant: 'pink' }, { text: '당신의 죄를', variant: 'cream' }] }],
+  fr: [{ chips: [{ text: 'CHUCHOTE', variant: 'pink' }, { text: 'TON PÉCHÉ', variant: 'cream' }] }],
 };
 
 const SEND: Record<string, string> = {
@@ -97,7 +74,11 @@ export default function TypingScreenV4({ onSubmit, onBack }: Props) {
   };
 
   const isOver = text.length > MAX;
-  const canSubmit = text.trim().length >= 6 && !isOver;
+  const tooShort = text.trim().length < 6;
+  const canSubmit = !tooShort && !isOver;
+  // Status hint for the SEND button — instead of "disabled forever", tell
+  // the user WHY they can't submit yet.
+  const sendHint = tooShort ? `${6 - text.trim().length} MORE` : isOver ? 'TOO LONG' : null;
 
   return (
     <div className="cb4-typing">
@@ -154,7 +135,7 @@ export default function TypingScreenV4({ onSubmit, onBack }: Props) {
           </div>
         )}
 
-        {/* SEND row — arrow chip + label, mirrors Panel 2's reading flow */}
+        {/* SEND row — when blocked, shows the reason instead of just being disabled */}
         <div className="cb4-typing__send-row">
           <button
             type="button"
@@ -166,7 +147,9 @@ export default function TypingScreenV4({ onSubmit, onBack }: Props) {
             disabled={!canSubmit}
           >
             <span className="cb4-typing__send-arrow">→</span>
-            <span className="cb4-typing__send-label">{sendLabel}</span>
+            <span className="cb4-typing__send-label">
+              {sendHint ? sendHint : sendLabel}
+            </span>
           </button>
         </div>
       </div>

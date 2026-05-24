@@ -90,7 +90,9 @@ export default function BoothScreenV4({ weekCount, onEnter, onWall }: Props) {
         ↘ {wallLabel}
       </button>
 
-      {/* The plate IS the ENTER button — tap to enter */}
+      {/* The plate IS the ENTER button — tap to enter. Edition dot lives
+          INSIDE the plate-btn so it positions relative to the plate not
+          the full-screen center wrapper. */}
       <div className="cb4-booth__center">
         <button
           type="button"
@@ -106,8 +108,8 @@ export default function BoothScreenV4({ weekCount, onEnter, onWall }: Props) {
             tilt={-3}
             sparkle={false}
           />
+          <NumberDot value="7" color="orange" size="lg" className="cb4-booth__edition" />
         </button>
-        <NumberDot value="7" color="orange" size="lg" className="cb4-booth__edition" />
       </div>
 
       {/* Week count — small medal at the bottom edge, balances the comp */}

@@ -295,23 +295,26 @@
 
   &__wall-link {
     position: absolute;
-    top: 12px;
+    top: 14px;
     right: 14px;
     z-index: 5;
-    padding: 6px 12px;
-    background: @v4-cream;
+    padding: 10px 16px;
+    background: @v4-yellow;
     color: @v4-black;
     border: 0;
     border-radius: 999px;
     font-family: 'Archivo Black', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    box-shadow: 0 0 0 3px @v4-black;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    box-shadow: 0 0 0 3px @v4-black, 0 4px 0 #0a0a0a;
     cursor: pointer;
     text-transform: uppercase;
     -webkit-tap-highlight-color: transparent;
-    transition: transform 90ms ease-out;
-    &:active { transform: scale(0.95); }
+    transition: transform 90ms ease-out, box-shadow 90ms ease-out;
+    &:active {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 3px @v4-black, 0 2px 0 #0a0a0a;
+    }
   }
 
   // Hero plate centered, big — the plate IS the ENTER button
@@ -332,8 +335,13 @@
     cursor: pointer;
     pointer-events: auto;
     -webkit-tap-highlight-color: transparent;
-    transition: transform 120ms ease-out;
-    &:active { transform: scale(0.97) rotate(-2deg); }
+    transition: transform 120ms ease-out, filter 120ms ease-out;
+    // 3D button feel — drop shadow under plate to suggest pressable depth
+    filter: drop-shadow(0 6px 0 #0a0a0a);
+    &:active {
+      transform: translateY(4px) rotate(-3deg);
+      filter: drop-shadow(0 2px 0 #0a0a0a);
+    }
   }
   &__edition {
     position: absolute;
@@ -344,24 +352,26 @@
     pointer-events: none;
   }
 
+  // Decorative count chip — smaller, lower contrast (it's not interactive)
   &__count {
     position: absolute;
-    bottom: 18px;
+    bottom: 14px;
     left: 50%;
     transform: translateX(-50%);
     z-index: 5;
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    padding: 5px 14px 5px 5px;
-    background: @v4-black;
-    color: @v4-cream;
+    gap: 6px;
+    padding: 3px 10px 3px 3px;
+    background: transparent;
+    color: fade(@v4-cream, 60%);
     border-radius: 999px;
-    box-shadow: 0 0 0 @halo @v4-cream;
+    box-shadow: 0 0 0 2px fade(@v4-cream, 40%);
+    pointer-events: none;
   }
   &__count-label {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
   }
@@ -472,20 +482,24 @@
     color: @v4-black;
     border: 0;
     border-radius: 22px;
-    box-shadow: 0 0 0 @halo @v4-black;
+    box-shadow: 0 0 0 @halo @v4-black, 0 6px 0 #0a0a0a;
     outline: none;
     resize: none;
-    padding: 18px 22px 30px;
+    padding: 22px 22px 44px;
     font-family: 'Inter', sans-serif;
     font-weight: 500;
-    font-size: 18px;
-    line-height: 1.35;
+    font-size: 19px;
+    line-height: 1.4;
     letter-spacing: -0.005em;
+    transition: box-shadow 200ms ease;
 
     &::placeholder {
-      color: fade(@v4-black, 35%);
+      color: fade(@v4-black, 38%);
       font-style: italic;
       font-weight: 400;
+    }
+    &:focus {
+      box-shadow: 0 0 0 @halo @v4-pink, 0 6px 0 #0a0a0a;
     }
   }
   &__counter {
@@ -527,18 +541,32 @@
     background: @v4-coral;
     color: @v4-black;
     border-radius: 999px;
-    box-shadow: 0 0 0 @halo @v4-black;
+    box-shadow: 0 0 0 @halo @v4-black, 0 5px 0 #0a0a0a;
     cursor: pointer;
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
-    transition: transform 90ms ease-out;
+    transition: transform 90ms ease-out, box-shadow 90ms ease-out;
 
-    &:active:not(:disabled) { transform: scale(0.97); }
+    &:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: 0 0 0 @halo @v4-black, 0 2px 0 #0a0a0a;
+    }
 
     &--disabled, &:disabled {
-      opacity: 0.55;
-      filter: saturate(0.4);
+      // Don't hide it — show clearly it's NOT ready, with a different color
+      background: fade(@v4-cream, 15%);
+      box-shadow: 0 0 0 @halo fade(@v4-cream, 60%);
+      color: fade(@v4-cream, 70%);
       cursor: not-allowed;
+
+      .cb4-typing__send-arrow {
+        background: fade(@v4-cream, 20%);
+        color: fade(@v4-cream, 70%);
+        box-shadow: @halo 0 0 fade(@v4-cream, 60%);
+      }
+      .cb4-typing__send-label {
+        color: fade(@v4-cream, 80%);
+      }
     }
   }
   &__send-arrow {
@@ -814,14 +842,14 @@
   &__sin-pill {
     white-space: normal !important;
     text-align: center;
-    line-height: 1.25;
+    line-height: 1.3;
     max-width: 100%;
     font-family: 'Inter', sans-serif !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
     text-transform: none !important;
     letter-spacing: 0 !important;
-    font-size: 14px !important;
-    padding: 10px 16px !important;
+    font-size: 15px !important;
+    padding: 12px 18px !important;
   }
   &__verdict-row {
     display: flex;
@@ -830,11 +858,13 @@
     justify-content: center;
     margin-top: 4px;
   }
+  // VERDICT is the emotional peak — make it MASSIVE
   &__verdict-pill {
     font-family: 'Bagel Fat One', 'Archivo Black', sans-serif !important;
-    font-size: 28px !important;
-    letter-spacing: 0.02em !important;
-    padding: 14px 28px !important;
+    font-size: 48px !important;
+    letter-spacing: 0.01em !important;
+    padding: 18px 30px !important;
+    box-shadow: 0 0 0 @halo @v4-black, 0 6px 0 #0a0a0a !important;
   }
 
   // Below the arc
@@ -859,33 +889,46 @@
     flex-direction: column;
     align-items: stretch;
   }
+  // The reply is ONE continuous paragraph in a soft-cream speech-bubble pill.
+  // Lines flow naturally; not chopped into small chips.
+  &__reply-bubble {
+    background: @v4-cream;
+    color: @v4-black;
+    border-radius: 22px;
+    box-shadow: 0 0 0 @halo @v4-black;
+    padding: 14px 18px;
+    margin-top: 2px;
+  }
   &__reply-line {
-    margin-bottom: 4px;
-    white-space: normal !important;
-    text-align: left !important;
-    line-height: 1.3;
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 600 !important;
-    text-transform: none !important;
-    letter-spacing: 0 !important;
-    font-size: 13px !important;
-    padding: 7px 14px !important;
-    justify-content: flex-start !important;
-    border-radius: 14px !important;
+    margin: 0 0 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    line-height: 1.4;
+    color: @v4-black;
+    &:last-child {
+      margin-bottom: 0;
+      font-style: italic;
+      color: fade(@v4-black, 75%);
+      padding-top: 4px;
+      border-top: 1px dashed fade(@v4-black, 25%);
+      margin-top: 8px;
+    }
   }
   &__penance {
     margin-top: 4px;
   }
   &__penance-pill {
-    white-space: normal !important;
-    text-align: center !important;
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 700 !important;
-    text-transform: none !important;
-    letter-spacing: 0 !important;
-    font-size: 14px !important;
-    padding: 10px 16px !important;
-    width: 100%;
+    background: @v4-coral;
+    color: @v4-black;
+    border-radius: 22px;
+    box-shadow: 0 0 0 @halo @v4-black;
+    padding: 14px 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.35;
+    text-align: center;
   }
 
   // Dock
@@ -1113,18 +1156,37 @@
     color: fade(@v4-cream, 70%);
     text-transform: uppercase;
   }
+  // Sin chip: full content visible (no truncation), reads as a quote
   &__sin-chip {
-    white-space: normal !important;
-    text-align: center !important;
-    font-family: 'Inter', sans-serif !important;
-    font-weight: 600 !important;
-    text-transform: none !important;
-    letter-spacing: 0 !important;
-    font-size: 11px !important;
-    line-height: 1.25 !important;
-    padding: 7px 12px !important;
-    max-width: 100%;
-    display: block;
+    background: @v4-cream;
+    color: @v4-black;
+    border-radius: 16px;
+    box-shadow: 0 0 0 3px @v4-black;
+    padding: 8px 12px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 12px;
+    line-height: 1.3;
+    text-align: center;
+    width: 100%;
+  }
+  &__new-tag {
+    background: @v4-pink;
+    color: @v4-black;
+    padding: 2px 6px;
+    border-radius: 999px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 8.5px;
+    letter-spacing: 0.16em;
+    box-shadow: 0 0 0 2px @v4-black;
+  }
+  &__expand-hint {
+    margin-top: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
+    color: fade(@v4-cream, 60%);
+    text-transform: uppercase;
   }
 
   &__expand {

@@ -116,10 +116,14 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
                   <div className="cb4-wall__card-meta">
                     <NumberDot value={c.ticketNumber.replace('#', '').split('-')[0]} color="orange" size="sm" />
                     <span className="cb4-wall__card-anon">{t('wall_anon')}</span>
+                    {i === 0 && <span className="cb4-wall__new-tag">NEW</span>}
                   </div>
-                  <Pill variant="cream" size="sm" className="cb4-wall__sin-chip">
-                    &ldquo;{c.sin.length > 56 ? c.sin.slice(0, 56) + '…' : c.sin}&rdquo;
-                  </Pill>
+                  <div className="cb4-wall__sin-chip">
+                    &ldquo;{c.sin}&rdquo;
+                  </div>
+                  <span className="cb4-wall__expand-hint">
+                    {open ? '↑ TAP TO CLOSE' : '↓ TAP TO READ MORE'}
+                  </span>
                 </div>
 
                 {open && (
