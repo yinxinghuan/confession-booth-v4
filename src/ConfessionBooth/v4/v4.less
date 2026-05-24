@@ -10,8 +10,9 @@
 @v4-lavender:  #a888ff;
 @v4-yellow:    #ffd24a;
 @v4-orange:    #ff9a3c;
+@v4-ruby:      #c64030;
 @v4-cobalt:    #2a64f0;
-@v4-halo:      #0a0a0a;
+@halo:         4px;   // standard black halo outline thickness
 
 .cb-shell { background: @v4-black !important; }
 .cb-shell > svg[aria-hidden]:first-of-type { display: none; }
@@ -32,7 +33,7 @@
   font-family: 'Archivo Black', 'Inter', sans-serif;
   font-weight: 900;
   font-size: 14px;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   text-align: center;
   color: @v4-black;
@@ -42,15 +43,15 @@
   touch-action: manipulation;
   transition: transform 90ms ease-out;
   white-space: nowrap;
-  // Halo: every pill gets a 3px black outline so it pops on patterns
-  box-shadow: 0 0 0 3px @v4-halo;
+  // 4px black halo outline (Wolność detail)
+  box-shadow: 0 0 0 @halo @v4-black;
 
   &:active { transform: scale(0.97); }
 
-  &--sm { padding: 6px 12px; font-size: 11px; }
-  &--md { padding: 10px 18px; font-size: 14px; }
-  &--lg { padding: 14px 22px; font-size: 16px; }
-  &--xl { padding: 18px 24px; font-size: 19px; letter-spacing: 0.08em; }
+  &--sm { padding: 6px 12px; font-size: 12px; }
+  &--md { padding: 9px 16px; font-size: 13px; }
+  &--lg { padding: 13px 20px; font-size: 16px; }
+  &--xl { padding: 18px 24px; font-size: 19px; letter-spacing: 0.06em; }
 
   &--pink     { background: @v4-pink;     color: @v4-black; }
   &--coral    { background: @v4-coral;    color: @v4-black; }
@@ -58,20 +59,47 @@
   &--lavender { background: @v4-lavender; color: @v4-black; }
   &--cream    { background: @v4-cream;    color: @v4-black; }
   &--yellow   { background: @v4-yellow;   color: @v4-black; }
-  &--black    { background: @v4-black;    color: @v4-cream; box-shadow: 0 0 0 3px @v4-cream; }
+  &--black    { background: @v4-black;    color: @v4-cream; box-shadow: 0 0 0 @halo @v4-cream; }
 
   &--outline-cream {
     background: transparent;
     color: @v4-cream;
-    box-shadow: inset 0 0 0 3px @v4-cream;
+    box-shadow: inset 0 0 0 @halo @v4-cream;
   }
   &--outline-pink {
     background: transparent;
     color: @v4-pink;
-    box-shadow: inset 0 0 0 3px @v4-pink;
+    box-shadow: inset 0 0 0 @halo @v4-pink;
   }
 
   &--full { width: 100%; }
+}
+
+// ---------------------------------------------------------------------------
+//  Arrow chip (small directional → / ← pill)
+// ---------------------------------------------------------------------------
+
+.cb4-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: @v4-orange;
+  color: @v4-black;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 18px;
+  line-height: 1;
+  box-shadow: 0 0 0 @halo @v4-black;
+  flex: 0 0 auto;
+
+  &--sm { padding: 4px 9px; font-size: 14px; }
+  &--md { padding: 7px 13px; font-size: 18px; }
+
+  &--orange { background: @v4-orange; }
+  &--cream  { background: @v4-cream; }
+  &--pink   { background: @v4-pink; }
+  &--teal   { background: @v4-teal; }
 }
 
 // ---------------------------------------------------------------------------
@@ -87,17 +115,12 @@
   font-weight: 900;
   color: @v4-black;
   background: @v4-orange;
-  box-shadow: 0 0 0 3px @v4-halo;
+  box-shadow: 0 0 0 @halo @v4-black;
   flex: 0 0 auto;
 
-  &--sm { width: 24px; height: 24px; font-size: 10px; padding: 0 4px; min-width: 24px; }
-  &--md { width: 36px; height: 36px; font-size: 13px; padding: 0 6px; min-width: 36px; }
-  &--lg { width: 50px; height: 50px; font-size: 20px; }
-
-  // when used inline with text width, lock to auto width
-  &--sm, &--md {
-    width: auto;
-  }
+  &--sm { height: 26px; min-width: 26px; padding: 0 7px; font-size: 12px; border-radius: 999px; }
+  &--md { height: 38px; min-width: 38px; padding: 0 10px; font-size: 14px; border-radius: 999px; }
+  &--lg { width: 52px; height: 52px; font-size: 22px; }
 
   &--orange   { background: @v4-orange;   color: @v4-black; }
   &--pink     { background: @v4-pink;     color: @v4-black; }
@@ -108,7 +131,69 @@
 }
 
 // ---------------------------------------------------------------------------
-//  Custom primary CTA — nested arrow chip
+//  Wordmark — curvy hero logotype (Bagel Fat One) in a colored plate
+// ---------------------------------------------------------------------------
+
+.cb4-wm {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 28px 12px;
+  border-radius: 22px;
+  box-shadow: 0 0 0 @halo @v4-black;
+
+  &--teal     { background: @v4-teal;     color: @v4-black; }
+  &--pink     { background: @v4-pink;     color: @v4-black; }
+  &--coral    { background: @v4-coral;    color: @v4-black; }
+  &--lavender { background: @v4-lavender; color: @v4-black; }
+  &--yellow   { background: @v4-yellow;   color: @v4-black; }
+  &--cream    { background: @v4-cream;    color: @v4-black; }
+
+  &__word {
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.005em;
+    color: @v4-black;
+    text-align: center;
+    // optical compensation — Bagel Fat One has a slight overhang at baseline
+    margin-bottom: -2px;
+  }
+
+  &__sub {
+    margin-top: 4px;
+    padding: 4px 12px;
+    background: @v4-pink;
+    color: @v4-black;
+    border-radius: 999px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    box-shadow: 0 0 0 3px @v4-black;
+    text-transform: uppercase;
+    line-height: 1;
+
+    &--pink  { background: @v4-pink; }
+    &--coral { background: @v4-coral; }
+    &--cream { background: @v4-cream; }
+    &--teal  { background: @v4-teal; }
+  }
+
+  &__spark {
+    position: absolute;
+    color: @v4-black;
+    font-size: 16px;
+    line-height: 1;
+
+    &--tl { top: 6px; left: 10px; }
+    &--br { bottom: 8px; right: 12px; }
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  Primary dual-segment CTA (arrow chip + label, joined inside one halo)
 // ---------------------------------------------------------------------------
 
 .cb4-cta-primary {
@@ -121,7 +206,7 @@
   border: 0;
   background: @v4-coral;
   border-radius: 999px;
-  box-shadow: 0 0 0 3px @v4-halo;
+  box-shadow: 0 0 0 @halo @v4-black;
   cursor: pointer;
   overflow: hidden;
   -webkit-tap-highlight-color: transparent;
@@ -140,13 +225,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 3px 0 0 @v4-halo;
+    box-shadow: @halo 0 0 @v4-black;
   }
   &__label {
     color: @v4-black;
     font-family: 'Archivo Black', sans-serif;
     font-size: 19px;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     padding: 18px 22px;
     display: inline-flex;
     align-items: center;
@@ -156,7 +241,7 @@
 }
 
 // ---------------------------------------------------------------------------
-//  BoothScreen V4 — refined Wolność layout
+//  BoothScreen v4
 // ---------------------------------------------------------------------------
 
 .cb4-booth {
@@ -167,22 +252,20 @@
   display: flex;
   flex-direction: column;
   font-family: 'Inter', sans-serif;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+  scrollbar-color: fade(@v4-cream, 25%) transparent;
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: fade(@v4-cream, 25%); border-radius: 2px; }
 
   &__head {
-    padding: 12px 18px 8px;
     flex: 0 0 auto;
-  }
-  &__head-line {
-    display: inline-flex;
+    padding: 12px 18px 8px;
+    display: flex;
     align-items: center;
     gap: 8px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10.5px;
-    font-weight: 500;
-    letter-spacing: 0.2em;
-    color: @v4-cream;
-    text-transform: uppercase;
   }
   &__head-dot {
     width: 8px;
@@ -192,12 +275,20 @@
     box-shadow: 0 0 6px fade(@v4-coral, 70%);
     animation: cb4-pulse 1.8s ease-in-out infinite;
   }
+  &__head-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: @v4-cream;
+    text-transform: uppercase;
+  }
 
-  // ---- hero band ----
+  // ---- hero band (dense zigzag + curvy CONFESS + edition dot) ----
   &__hero {
     position: relative;
-    flex: 1 1 auto;
-    min-height: 280px;
+    flex: 0 0 auto;
+    height: 280px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -213,118 +304,74 @@
     position: absolute;
     inset: 0;
   }
-  &__hero-content {
+  &__hero-stack {
     position: relative;
     z-index: 2;
     display: flex;
     align-items: flex-start;
   }
-
-  // The CONFESS plate — teal rounded rectangle with decorative sparkles
-  &__plate {
-    position: relative;
-    background: @v4-teal;
-    color: @v4-black;
-    padding: 16px 30px 12px;
-    border-radius: 18px;
-    box-shadow: 0 0 0 4px @v4-halo;
-    transform: rotate(-2.5deg);
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-  }
-  &__plate-spark {
-    position: absolute;
-    color: @v4-black;
-    font-size: 16px;
-    line-height: 1;
-
-    &--tl { top: 4px; left: 8px; }
-    &--br { bottom: 6px; right: 10px; }
-  }
-
-  &__wordmark {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 50px;
-    line-height: 0.92;
-    letter-spacing: -0.025em;
-    color: @v4-black;
-  }
-
-  &__sub {
-    margin-top: 2px;
-    padding: 4px 12px;
-    background: @v4-pink;
-    color: @v4-black;
-    border-radius: 999px;
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.22em;
-    box-shadow: 0 0 0 2.5px @v4-halo;
-    text-transform: uppercase;
-  }
-
   &__edition {
     position: relative;
     z-index: 3;
     transform: translate(-16px, -22px) rotate(8deg);
   }
 
-  // ---- hex divider band with floating count chip ----
-  &__hex {
+  // ---- rainbow-arc band wrapping the slogan rows ----
+  &__arc-section {
     position: relative;
-    height: 60px;
     flex: 0 0 auto;
+    min-height: 220px;
+    padding: 8px 0 18px;
     overflow: hidden;
   }
-  &__hex-tile {
+  &__arc {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
   }
-  &__count {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+  &__arc-content {
+    position: relative;
     z-index: 2;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: @v4-black;
-    color: @v4-cream;
-    padding: 7px 14px 7px 8px;
-    border-radius: 999px;
-    box-shadow: 0 0 0 3px @v4-cream;
-  }
-  &__count-label {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-  }
-
-  // ---- slogan chip stack ----
-  &__slogan {
-    flex: 0 0 auto;
-    padding: 16px 18px;
+    padding: 16px 36px 8px;
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  &__slogan-row {
+    display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-  }
-  &__slogan-chip {
-    white-space: nowrap;
+    flex-wrap: wrap;
   }
 
-  // ---- CTA stack ----
-  &__cta {
+  // ---- footer / CTA stack ----
+  &__foot {
     flex: 0 0 auto;
-    padding: 8px 18px 22px;
+    padding: 14px 18px 22px;
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
+    align-items: center;
+  }
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px 6px 6px;
+    background: @v4-black;
+    color: @v4-cream;
+    border-radius: 999px;
+    box-shadow: 0 0 0 @halo @v4-cream;
+    margin-bottom: 4px;
+  }
+  &__count-label {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 10.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
   }
 }
 
