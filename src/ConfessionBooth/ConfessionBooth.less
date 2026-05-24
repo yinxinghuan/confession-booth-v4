@@ -1,0 +1,2410 @@
+// ============================================================================
+//  Confession Booth — stained glass + dark wood + 1-800 hotline
+// ============================================================================
+
+// Palette
+@wood:           #2a1c12;
+@wood-deep:      #0d0805;
+@wood-mid:       #3d2818;
+@brass:          #a87e3a;
+@brass-light:    #d8a849;
+@brass-dark:     #5a3e15;
+@candle:         #f3e4c2;
+@cream:          #efe4c8;
+@paper:          #f8efd6;
+@paper-rule:     #b69874;
+@ink:            #1a1208;
+@amber:          #e8a23a;
+@rose:           #c64873;
+@cobalt:         #1d33c4;
+@ruby:           #8a1a1a;
+@lavender:      #9879d1;
+@crt:           #4ad08f;   // CRT-screen sickly green — operator monitor leak
+@neon:          #ec2c64;   // hot rose neon — diner-sign reveal
+@neon-yellow:   #ffba3a;   // matching warm-yellow neon
+
+// ---------------------------------------------------------------------------
+//  Shell
+// ---------------------------------------------------------------------------
+
+.cb-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: @wood-deep;
+  color: @candle;
+}
+
+.cb-stage {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 18px 22px 22px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+// ---------------------------------------------------------------------------
+//  Meta strip (top mono header on every screen)
+// ---------------------------------------------------------------------------
+
+.cb-meta {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 2px 0 6px;
+  border-bottom: 1px solid fade(@brass, 35%);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.13em;
+  color: @brass-light;
+  text-transform: uppercase;
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: @amber;
+    box-shadow: 0 0 6px fade(@amber, 80%);
+    animation: cb-meta-pulse 1.8s ease-in-out infinite;
+  }
+
+  &__text {
+    flex: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+}
+
+@keyframes cb-meta-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.35; }
+}
+
+// ---------------------------------------------------------------------------
+//  Call-center keypad buttons (.cb-key)
+// ---------------------------------------------------------------------------
+
+.cb-key {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 24px;
+  border: 0;
+  cursor: pointer;
+  font-family: 'Big Shoulders Stencil Display', 'IBM Plex Mono', monospace;
+  font-weight: 900;
+  font-size: 17px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  text-align: center;
+  border-radius: 4px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+  transition: transform 60ms ease-out, box-shadow 120ms ease;
+  overflow: hidden;
+
+  &__label {
+    position: relative;
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  &__bevel {
+    position: absolute;
+    left: 0; right: 0;
+    height: 2px;
+    z-index: 3;
+    pointer-events: none;
+    &--top { top: 0; }
+    &--bot { bottom: 0; }
+  }
+  &__screw {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    z-index: 3;
+    background: radial-gradient(circle at 30% 30%, #c8a060, #2e1b08 80%);
+    box-shadow: inset 0 0 0 0.5px #1a0f08;
+
+    // primary's two screws sit at vertical center, hugging side edges
+    &--l { top: 50%; left: 6px; transform: translateY(-50%); }
+    &--r { top: 50%; right: 6px; transform: translateY(-50%); }
+    // secondary's four screws are corners
+    &--tl { top: 6px; left: 6px; }
+    &--tr { top: 6px; right: 6px; }
+    &--bl { bottom: 6px; left: 6px; }
+    &--br { bottom: 6px; right: 6px; }
+
+    // tiny phillips slot
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      width: 4px;
+      height: 0.6px;
+      background: #1a0f08;
+      box-shadow: 0 0 0 0.3px fade(#000, 80%);
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      width: 4px;
+      height: 0.6px;
+      background: #1a0f08;
+    }
+  }
+  &__led {
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    z-index: 3;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #b8f5cd, #2bbf6b 60%, #105433 100%);
+    box-shadow:
+      0 0 6px fade(@crt, 95%),
+      0 0 12px fade(@crt, 60%),
+      inset 0 -1px 1px fade(#000, 60%);
+    animation: cb-led-pulse 2s ease-in-out infinite;
+  }
+  &__plate-rule {
+    position: absolute;
+    left: 22px; right: 22px;
+    height: 1px;
+    background: fade(#000, 35%);
+    box-shadow: 0 1px 0 fade(#fce6a3, 35%);
+    pointer-events: none;
+    z-index: 3;
+    &--top { top: 4px; }
+    &--bot { bottom: 4px; }
+  }
+
+  &--full { width: 100%; }
+
+  &:active:not(:disabled) {
+    transform: translateY(2px);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: default;
+    .cb-key__led { animation: none; opacity: 0.4; }
+  }
+
+  // ---- primary: illuminated cream-plastic phone key ----------------------
+  &--primary {
+    color: #2a1c12;
+    background:
+      // upper highlight
+      radial-gradient(ellipse at 50% 0%, fade(#fff, 70%) 0%, transparent 60%),
+      linear-gradient(180deg, #fff5d2 0%, @candle 38%, #d6c089 100%);
+    box-shadow:
+      // thick dark base — the depression travel
+      0 5px 0 #4a3210,
+      // matt drop shadow under the base
+      0 8px 14px fade(#000, 55%),
+      // recessed bezel rim
+      inset 0 0 0 1.5px #4a3210,
+      // inner top highlight (glossy plastic)
+      inset 0 2px 0 fade(#fff, 90%),
+      // inner bottom shadow (depressed lip)
+      inset 0 -3px 4px fade(#4a3210, 35%);
+    text-shadow: 0 1px 0 fade(#fff, 60%);
+
+    .cb-key__bevel--top {
+      background: linear-gradient(180deg, fade(#fff, 85%) 0%, transparent 100%);
+    }
+    .cb-key__bevel--bot {
+      background: linear-gradient(0deg, fade(#4a3210, 45%) 0%, transparent 100%);
+    }
+
+    &:active:not(:disabled) {
+      box-shadow:
+        0 1px 0 #4a3210,
+        0 4px 8px fade(#000, 55%),
+        inset 0 0 0 1.5px #4a3210,
+        inset 0 -1px 0 fade(#fff, 50%),
+        inset 0 3px 4px fade(#4a3210, 55%);
+    }
+  }
+
+  // ---- secondary: engraved brass nameplate -------------------------------
+  &--secondary {
+    color: #fce6a3;
+    padding: 16px 22px;
+    background:
+      linear-gradient(180deg, #d8a849 0%, #a87e3a 45%, #5a3e15 100%);
+    box-shadow:
+      // thin lifted shadow (mounted plate, not pressable-feeling)
+      0 3px 0 #2e1b08,
+      0 5px 10px fade(#000, 60%),
+      inset 0 0 0 1px #2e1b08,
+      inset 0 1px 0 fade(#fce6a3, 60%),
+      inset 0 -1px 0 fade(#2e1b08, 80%);
+    text-shadow:
+      // engraved type: dark inset shadow + bright bottom highlight
+      0 -1px 0 fade(#2e1b08, 75%),
+      0 1px 0 fade(#fce6a3, 35%);
+
+    .cb-key__bevel--top {
+      background: linear-gradient(180deg, fade(#fce6a3, 95%) 0%, transparent 100%);
+    }
+    .cb-key__bevel--bot {
+      background: linear-gradient(0deg, fade(#2e1b08, 80%) 0%, transparent 100%);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+      box-shadow:
+        0 2px 0 #2e1b08,
+        0 3px 6px fade(#000, 60%),
+        inset 0 0 0 1px #2e1b08,
+        inset 0 1px 0 fade(#fce6a3, 60%);
+    }
+  }
+
+  // ---- ghost: text-only link, brass underline ---------------------------
+  &--ghost {
+    color: @brass-light;
+    background: transparent;
+    padding: 12px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    font-weight: 700;
+    box-shadow: none;
+    border-radius: 0;
+    overflow: visible;
+
+    .cb-key__bevel, .cb-key__screw, .cb-key__led { display: none; }
+    &::after {
+      content: '';
+      position: absolute;
+      left: 14px; right: 14px; bottom: 6px;
+      height: 1px;
+      background: fade(@brass, 60%);
+    }
+    &:active { transform: translateY(0); }
+  }
+}
+
+@keyframes cb-led-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 6px fade(@crt, 95%),
+      0 0 12px fade(@crt, 60%),
+      inset 0 -1px 1px fade(#000, 60%);
+  }
+  50% {
+    box-shadow:
+      0 0 10px fade(@crt, 100%),
+      0 0 20px fade(@crt, 80%),
+      inset 0 -1px 1px fade(#000, 60%);
+  }
+}
+
+// (legacy .cb-chip alias removed — all consumers use .cb-key now)
+
+// ---------------------------------------------------------------------------
+//  Booth Screen (entry)
+// ---------------------------------------------------------------------------
+
+.cb-booth {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  gap: 4px;
+
+  &__glass-wrap {
+    position: relative;
+    margin-top: 10px;
+    display: inline-flex;
+    align-items: flex-end;
+    filter: drop-shadow(0 6px 20px fade(@amber, 25%));
+  }
+
+  &__candle {
+    position: absolute;
+    bottom: -8px;
+    &--left  { left: -18px; }
+    &--right { right: -18px; }
+  }
+
+  &__hero {
+    margin: 10px 0 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 56px;
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+    color: @candle;
+    text-shadow: 0 2px 0 fade(#000, 60%);
+    filter: url(#cb-ink-wobble);
+  }
+  &__hero-a {
+    display: block;
+    font-style: italic;
+    font-weight: 600;
+    color: @brass-light;
+  }
+  &__hero-b {
+    display: block;
+    font-size: 78px;
+  }
+
+  &__sub {
+    margin: 10px 0 6px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: fade(@candle, 75%);
+    letter-spacing: 0.02em;
+  }
+
+  &__grille-wrap {
+    position: relative;
+    margin: 6px 0 14px;
+    width: 86%;
+    height: 78px;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow:
+      inset 0 0 0 2px fade(@brass-dark, 70%),
+      inset 0 0 18px fade(#000, 60%),
+      0 1px 0 fade(@brass-light, 30%);
+  }
+  &__grille-veil {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 130%, fade(@amber, 28%) 0%, transparent 60%),
+      linear-gradient(180deg, transparent 0%, fade(#000, 40%) 100%);
+    pointer-events: none;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-top: auto;
+  }
+
+  &__count {
+    margin: 12px 0 4px;
+    font-family: 'IBM Plex Mono', ui-monospace, monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.16em;
+    color: fade(@brass-light, 75%);
+    text-transform: uppercase;
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  Stained glass — flicker on warm panes
+// ---------------------------------------------------------------------------
+
+.cb-glass__pane {
+  transform-origin: center;
+  animation: cb-glass-flicker 6.5s ease-in-out infinite;
+}
+.cb-glass__petal {
+  animation: cb-glass-petal 5.2s ease-in-out infinite;
+}
+.cb-glass__core {
+  animation: cb-glass-core 3.2s ease-in-out infinite;
+}
+
+@keyframes cb-glass-flicker {
+  0%, 100% { opacity: 1; }
+  47%      { opacity: 0.74; }
+  52%      { opacity: 0.96; }
+  70%      { opacity: 0.86; }
+}
+@keyframes cb-glass-petal {
+  0%, 100% { opacity: 0.92; }
+  50%      { opacity: 1; }
+}
+@keyframes cb-glass-core {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.18); opacity: 0.8; }
+}
+
+// ---------------------------------------------------------------------------
+//  Candle flicker
+// ---------------------------------------------------------------------------
+
+.cb-candle__flame {
+  transform-origin: 24px 54px;
+  animation: cb-candle-flicker 1.4s ease-in-out infinite;
+}
+.cb-candle__halo {
+  animation: cb-candle-halo 2.1s ease-in-out infinite;
+}
+
+@keyframes cb-candle-flicker {
+  0%, 100% { transform: scaleY(1) scaleX(1) rotate(-1deg); opacity: 1; }
+  40%      { transform: scaleY(1.06) scaleX(0.96) rotate(1deg); opacity: 0.88; }
+  60%      { transform: scaleY(0.92) scaleX(1.04) rotate(-2deg); opacity: 1; }
+}
+@keyframes cb-candle-halo {
+  0%, 100% { opacity: 0.7; }
+  50%      { opacity: 1; }
+}
+
+// ---------------------------------------------------------------------------
+//  Typing screen
+// ---------------------------------------------------------------------------
+
+.cb-typing {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 8px;
+
+  &__glass-strip {
+    position: relative;
+    align-self: center;
+    margin: 4px 0 2px;
+    filter: drop-shadow(0 4px 12px fade(@amber, 22%));
+  }
+  &__candle {
+    position: absolute;
+    right: 12px;
+    bottom: -10px;
+  }
+
+  &__hint {
+    margin: 4px 0 0;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: fade(@candle, 80%);
+  }
+
+  &__well {
+    position: relative;
+    flex: 1 1 auto;
+    margin: 4px 0;
+    min-height: 220px;
+    border-radius: 4px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 50% 30%, fade(@amber, 6%) 0%, transparent 70%),
+      linear-gradient(180deg, #0a0703 0%, #1d130a 50%, #0a0703 100%);
+    box-shadow:
+      inset 0 0 0 2px fade(@brass-dark, 80%),
+      inset 0 0 30px fade(#000, 75%),
+      0 1px 0 fade(@brass-light, 30%);
+  }
+  &__grille-band {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 56px;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+    border-bottom: 1px solid fade(@brass-dark, 90%);
+    filter: drop-shadow(0 4px 4px fade(#000, 80%));
+
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 0%, fade(#000, 35%) 100%);
+      pointer-events: none;
+    }
+  }
+  &__input {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    padding: 68px 18px 34px;
+    color: @candle;
+    font-family: 'Caveat', 'Cormorant Garamond', serif;
+    font-size: 24px;
+    line-height: 1.4;
+    resize: none;
+    text-shadow: 0 1px 0 fade(#000, 70%);
+    caret-color: @amber;
+
+    &::placeholder {
+      color: fade(@candle, 60%);
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 17px;
+    }
+  }
+  &__well-meta {
+    position: absolute;
+    z-index: 3;
+    right: 10px;
+    bottom: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: fade(@brass-light, 70%);
+  }
+  &__chars--over { color: @rose; }
+
+  &__error {
+    margin: 0;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: @rose;
+    letter-spacing: 0.04em;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+
+    .cb-key--primary { flex: 1 1 auto; }
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  Processing screen
+// ---------------------------------------------------------------------------
+
+.cb-processing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  gap: 8px;
+
+  &__glass {
+    margin-top: 14px;
+    filter: drop-shadow(0 6px 16px fade(@amber, 22%));
+    opacity: 0.78;
+  }
+
+  &__phone {
+    margin: 4px 0;
+    filter: drop-shadow(0 6px 0 #000) drop-shadow(0 0 12px fade(@amber, 25%));
+  }
+  &__handset {
+    transform-origin: 80px 30px;
+    &--ring {
+      animation: cb-phone-ring 0.42s ease-in-out infinite;
+    }
+  }
+  &__waves {
+    animation: cb-phone-waves 0.6s ease-in-out infinite alternate;
+  }
+
+  &__status {
+    margin-top: 6px;
+    text-align: center;
+  }
+  &__label {
+    margin: 0;
+    font-family: 'Special Elite', 'Courier New', monospace;
+    font-size: 17px;
+    color: @candle;
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+  }
+  &__dots {
+    display: inline-block;
+    width: 22px;
+    text-align: left;
+    color: @amber;
+  }
+
+  &__steps {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 14px;
+  }
+  &__step {
+    width: 32px;
+    height: 4px;
+    border-radius: 2px;
+    background: fade(@brass-dark, 50%);
+    transition: background 220ms ease, box-shadow 220ms ease;
+
+    &--done { background: @brass; }
+    &--now {
+      background: @amber;
+      box-shadow: 0 0 8px fade(@amber, 80%);
+      animation: cb-step-now 1.1s ease-in-out infinite;
+    }
+  }
+
+  &__fineprint {
+    margin: auto 0 6px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    color: fade(@brass-light, 55%);
+    text-transform: uppercase;
+  }
+}
+
+@keyframes cb-phone-ring {
+  0%, 100% { transform: rotate(-3deg); }
+  50%      { transform: rotate(3deg); }
+}
+@keyframes cb-phone-waves {
+  0%   { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+@keyframes cb-step-now {
+  0%, 100% { box-shadow: 0 0 8px fade(@amber, 80%); }
+  50%      { box-shadow: 0 0 14px fade(@amber, 100%); }
+}
+
+// ---------------------------------------------------------------------------
+//  Receipt — torn-paper container
+// ---------------------------------------------------------------------------
+
+.cb-receipt {
+  position: relative;
+  background: @paper;
+  color: @ink;
+  padding: 24px 22px 28px;
+  margin: 4px 0;
+  width: 100%;
+  box-shadow:
+    0 12px 24px fade(#000, 60%),
+    0 0 0 1px fade(@brass-dark, 30%);
+
+  &--small {
+    padding: 16px 14px 18px;
+  }
+
+  &__body {
+    position: relative;
+    z-index: 2;
+  }
+
+  &__rules {
+    position: absolute;
+    inset: 0;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 22px,
+      fade(@paper-rule, 18%) 22px,
+      fade(@paper-rule, 18%) 23px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  // Torn paper edges (top and bottom)
+  &__torn {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 14px;
+    background: @paper;
+    z-index: 3;
+
+    &--top {
+      top: -8px;
+      clip-path: polygon(
+        0 100%, 4% 30%, 8% 80%, 13% 20%, 18% 75%, 24% 35%, 30% 78%, 36% 25%, 42% 80%, 48% 38%, 54% 78%, 60% 20%, 66% 80%, 72% 35%, 78% 76%, 84% 25%, 89% 80%, 94% 30%, 100% 80%, 100% 100%
+      );
+    }
+    &--bot {
+      bottom: -8px;
+      clip-path: polygon(
+        0 0, 0 0, 4% 70%, 8% 20%, 13% 80%, 18% 25%, 24% 65%, 30% 22%, 36% 75%, 42% 20%, 48% 62%, 54% 22%, 60% 80%, 66% 20%, 72% 65%, 78% 24%, 84% 75%, 89% 20%, 94% 70%, 100% 25%, 100% 0
+      );
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  Absolution Screen
+// ---------------------------------------------------------------------------
+
+.cb-abs {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 4px;
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  &__head-meta { display: flex; flex-direction: column; gap: 2px; }
+  &__candle {
+    margin-top: -2px;
+    margin-right: -4px;
+  }
+  &__meta-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    color: fade(@ink, 60%);
+    text-transform: uppercase;
+  }
+  &__meta-key {
+    font-weight: 500;
+  }
+  &__meta-val {
+    color: @ink;
+    font-weight: 700;
+  }
+
+  &__section-label {
+    margin: 6px 0 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: fade(@ink, 60%);
+
+    &--inline {
+      display: inline;
+      margin: 0;
+      letter-spacing: 0.18em;
+    }
+  }
+
+  &__sin {
+    margin-top: 4px;
+  }
+  &__sin-text {
+    margin: 0;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 23px;
+    line-height: 1.25;
+    color: @ink;
+    transform: rotate(-0.4deg);
+  }
+
+  &__rule {
+    border: 0;
+    border-top: 1px dashed fade(@ink, 35%);
+    margin: 10px 0;
+  }
+
+  &__reply {
+    margin: 0;
+  }
+  &__reply-line {
+    margin: 4px 0;
+    font-family: 'Special Elite', 'Courier New', monospace;
+    font-size: 15px;
+    line-height: 1.35;
+    color: @ink;
+    opacity: 0;
+    animation: cb-abs-line 380ms ease-out forwards;
+  }
+
+  &__penance {
+    margin: 14px 0 4px;
+    padding: 10px 12px;
+    background: fade(@brass, 18%);
+    border-left: 3px solid @brass-dark;
+  }
+  &__penance-text {
+    margin: 4px 0 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 16px;
+    color: @ink;
+  }
+
+  &__stamp {
+    position: absolute;
+    bottom: 18px;
+    right: 8px;
+    transform: rotate(-12deg);
+    pointer-events: none;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 12px;
+
+    .cb-key--primary { flex: 1 1 auto; }
+  }
+}
+
+@keyframes cb-abs-line {
+  0%   { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+// Stamp slam-down on first reveal
+.cb-stamp--slam {
+  animation: cb-stamp-slam 540ms cubic-bezier(.32,.7,.4,1.3) both;
+}
+@keyframes cb-stamp-slam {
+  0%   { transform: scale(2.4) rotate(-30deg); opacity: 0; }
+  35%  { transform: scale(1.1) rotate(-10deg); opacity: 1; }
+  60%  { transform: scale(0.94) rotate(-13deg); }
+  100% { transform: scale(1) rotate(-12deg); }
+}
+
+// ---------------------------------------------------------------------------
+//  Wall Screen
+// ---------------------------------------------------------------------------
+
+.cb-wall {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 4px;
+
+  &__hero {
+    text-align: center;
+    margin: 8px 0 14px;
+    h1 {
+      margin: 0;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 34px;
+      line-height: 1;
+      letter-spacing: 0.02em;
+      color: @candle;
+      filter: url(#cb-ink-wobble);
+    }
+  }
+  &__hero-a {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: @candle;
+  }
+  &__hero-b {
+    display: block;
+    font-style: italic;
+    font-size: 28px;
+    color: @brass-light;
+    margin-top: 4px;
+  }
+
+  &__empty {
+    margin: 30px auto;
+    color: fade(@candle, 60%);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 12px;
+  }
+
+  &__item {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 200ms ease;
+    &:active { transform: scale(0.985); }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  &__row-body { min-width: 0; }
+  &__row-stamp { flex: 0 0 auto; }
+
+  &__sin {
+    margin: 0 0 4px;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.2;
+    color: @ink;
+    transform: rotate(-0.3deg);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  &__quip {
+    margin: 4px 0 4px;
+    font-family: 'Special Elite', monospace;
+    font-size: 12px;
+    color: fade(@ink, 80%);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__anon {
+    margin: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: fade(@ink, 50%);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  &__expand {
+    margin-top: 6px;
+
+    .cb-abs__reply-line { font-size: 13.5px; }
+  }
+  &__expand-line {
+    animation: cb-abs-line 280ms ease-out forwards;
+  }
+  &__expand-penance {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: fade(@brass, 14%);
+    border-left: 2px solid @brass-dark;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: @ink;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid fade(@brass, 20%);
+
+    .cb-key--primary { flex: 1 1 auto; }
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  Toast / hidden helpers
+// ---------------------------------------------------------------------------
+
+.cb-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: @ruby;
+  color: @candle;
+  padding: 8px 16px;
+  font-family: 'Special Elite', monospace;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  box-shadow: 0 4px 12px fade(#000, 50%);
+}
+
+.cb-loading-hidden { display: none; }
+
+// ---------------------------------------------------------------------------
+//  Scrollbars — thin brass-tinted rail on every scrollable container, fades
+//  to invisible when idle. Matches the call-center aesthetic instead of the
+//  default browser bar.
+// ---------------------------------------------------------------------------
+
+.cb-stage,
+.cb-wall-v2__board,
+.cb-wall__list {
+  // Firefox
+  scrollbar-width: thin;
+  scrollbar-color: fade(@brass, 35%) transparent;
+
+  // Webkit / Blink
+  &::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: fade(@brass, 30%);
+    border-radius: 2px;
+    transition: background 200ms ease;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: fade(@brass-light, 55%);
+  }
+  &::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+}
+
+// ===========================================================================
+//  V2 — gothic punk-flyer / noir confessional POV
+// ===========================================================================
+
+// ---- chamber layout --------------------------------------------------------
+
+.cb-booth-v2 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 4px;
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+  &__action-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .cb-key--secondary { flex: 1 1 auto; }
+  }
+  &__count {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    padding: 14px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: @brass-light;
+    border: 1px solid fade(@brass, 35%);
+    border-radius: 3px;
+    background: fade(#000, 30%);
+  }
+  &__count-num {
+    font-size: 18px;
+    font-weight: 700;
+    color: @neon-yellow;
+    letter-spacing: 0.04em;
+  }
+  &__count-tag {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: fade(@brass-light, 65%);
+  }
+}
+
+.cb-chamber {
+  position: relative;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  margin-top: 4px;
+  min-height: 0;
+
+  &__transom {
+    position: relative;
+    height: 102px;
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: visible;
+  }
+  &__transom-glass {
+    position: absolute;
+    top: 6px;
+    left: 22px;
+    filter: drop-shadow(0 0 18px fade(@amber, 22%));
+    opacity: 0.85;
+  }
+  &__transom-fluo {
+    position: absolute;
+    top: 38px;
+    right: 6px;
+    transform: rotate(-2deg);
+    animation: cb-fluo-flicker 4.6s linear infinite;
+  }
+  // Diagonal light shaft — kept but biased to right corner now
+  &__shaft {
+    position: absolute;
+    right: -40px;
+    top: -20px;
+    width: 360px;
+    height: 240px;
+    background: linear-gradient(-116deg, fade(@candle, 18%) 0%, fade(@amber, 6%) 30%, transparent 60%);
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  &__grille-well {
+    position: relative;
+    flex: 1 1 auto;
+    margin-top: 6px;
+    overflow: hidden;
+    border-top: 2px solid @brass-dark;
+    border-bottom: 2px solid @brass-dark;
+    box-shadow:
+      inset 0 0 0 1px fade(@brass-light, 28%),
+      inset 0 -6px 30px fade(#000, 70%);
+    background: linear-gradient(180deg, #0a0703 0%, #1d130a 50%, #0a0703 100%);
+    min-height: 200px;
+  }
+
+  &__leak {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  &__postit {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    z-index: 4;
+    background: #f3df6e;
+    color: #1a0f08;
+    padding: 8px 10px 10px;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 0.95;
+    text-align: center;
+    transform: rotate(7deg);
+    box-shadow:
+      0 4px 12px fade(#000, 50%),
+      inset 0 -2px 0 fade(#c8a72c, 60%);
+    text-shadow: 0 1px 0 fade(#fff, 30%);
+    letter-spacing: 0.02em;
+    width: 64px;
+
+    // pin nub on top
+    &::after {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, @neon, darken(@neon, 28%) 75%);
+      box-shadow: 0 1px 0 fade(#000, 60%);
+    }
+  }
+
+  &__floor {
+    flex: 0 0 auto;
+    padding: 16px 0 8px;
+    margin-top: 2px;
+  }
+
+  &__neon {
+    position: absolute;
+    right: 8px;
+    bottom: 18px;
+    z-index: 2; // behind grille
+    transform: rotate(-6deg) scale(0.78);
+    transform-origin: bottom right;
+    opacity: 0.78;
+    animation: cb-neon-flicker 4.8s linear infinite;
+    pointer-events: none;
+    filter: blur(0.4px);
+  }
+}
+
+@keyframes cb-neon-flicker {
+  0%, 70%, 100% { opacity: 1; }
+  72%           { opacity: 0.3; }
+  73%           { opacity: 1; }
+  82%           { opacity: 0.5; }
+  84%           { opacity: 1; }
+}
+
+// ---- crash type ------------------------------------------------------------
+
+.cb-crash {
+  position: absolute;
+  z-index: 5;
+  top: 138px;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  // hero word breaks across the grille seam — clipped slightly by it
+  mix-blend-mode: normal;
+
+  &__word {
+    flex: 1 1 auto;
+    font-family: 'UnifrakturCook', 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-size: 64px;
+    line-height: 0.82;
+    letter-spacing: -0.01em;
+    color: @candle;
+    text-shadow:
+      0 2px 0 #000,
+      0 4px 14px fade(#000, 60%),
+      0 0 24px fade(@amber, 25%);
+    filter: url(#cb-ink-wobble);
+    text-transform: none;
+  }
+
+  &__rule {
+    flex: 0 0 6px;
+    align-self: stretch;
+    background: @neon;
+    box-shadow: 0 0 8px fade(@neon, 60%);
+  }
+
+  &__tag {
+    flex: 0 0 auto;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-family: 'Big Shoulders Stencil Display', 'IBM Plex Mono', monospace;
+    font-weight: 900;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    color: @neon;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px fade(@neon, 50%);
+  }
+}
+
+// ---- desk leak (behind the grille) ----------------------------------------
+
+.cb-leak {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+
+  &__crt {
+    position: absolute;
+    top: 22%;
+    left: 6%;
+    width: 70%;
+    height: 56%;
+    background:
+      radial-gradient(ellipse at 35% 38%, fade(@crt, 78%) 0%, fade(@crt, 30%) 35%, transparent 75%),
+      linear-gradient(180deg, fade(@crt, 16%) 0%, transparent 100%);
+    filter: blur(1.6px);
+    animation: cb-crt-flicker 3.3s ease-in-out infinite;
+    mix-blend-mode: screen;
+  }
+  &__crt-scan {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 3px,
+      fade(#000, 12%) 3px,
+      fade(#000, 12%) 4px
+    );
+    opacity: 0.6;
+    animation: cb-crt-roll 8s linear infinite;
+  }
+
+  &__neon {
+    position: absolute;
+    top: 8px;
+    right: 8%;
+    transform: rotate(-10deg);
+    color: @neon-yellow;
+    font-family: 'Big Shoulders Stencil Display', monospace;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: 0.22em;
+    opacity: 0.78;
+    filter: drop-shadow(0 0 4px @neon-yellow) drop-shadow(0 0 10px fade(@neon, 60%));
+    line-height: 1.05;
+    span { display: block; }
+  }
+
+  &__lamp {
+    position: absolute;
+    top: -4px;
+    right: 4%;
+    width: 92px;
+    height: 110px;
+    opacity: 1;
+  }
+
+  &__cup {
+    position: absolute;
+    bottom: 8px;
+    left: 6%;
+    width: 60px;
+    height: 72px;
+    opacity: 0.94;
+  }
+  &__steam {
+    animation: cb-steam 2.4s ease-in-out infinite;
+  }
+
+  &__cassette {
+    position: absolute;
+    bottom: 24%;
+    right: 8%;
+    width: 78px;
+    height: 50px;
+    transform: rotate(8deg);
+    opacity: 0.92;
+    filter: drop-shadow(0 4px 4px fade(#000, 60%));
+  }
+
+  &__clock {
+    position: absolute;
+    top: 26%;
+    left: 2%;
+    width: 56px;
+    height: 70px;
+    transform: rotate(-4deg);
+    opacity: 0.88;
+    filter: drop-shadow(0 4px 4px fade(#000, 60%));
+  }
+
+  &__binder {
+    position: absolute;
+    bottom: 8%;
+    right: 28%;
+    width: 70px;
+    height: 48px;
+    transform: rotate(-3deg);
+    opacity: 0.84;
+    filter: drop-shadow(0 4px 4px fade(#000, 60%));
+  }
+
+  &__postit {
+    position: absolute;
+    bottom: 36%;
+    right: 22%;
+    background: #f3df6e;
+    color: #1a0f08;
+    padding: 6px 8px 7px;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 0.95;
+    text-align: center;
+    transform: rotate(-5deg);
+    box-shadow: 0 3px 8px fade(#000, 60%);
+    letter-spacing: 0.02em;
+    opacity: 0.92;
+    span { display: block; }
+  }
+
+  &__cord {
+    position: absolute;
+    top: 46%;
+    left: 0;
+    width: 100%;
+    height: 32px;
+    opacity: 0.6;
+  }
+}
+
+@keyframes cb-crt-roll {
+  0%   { transform: translateY(0); }
+  100% { transform: translateY(4px); }
+}
+@keyframes cb-fluo-flicker {
+  0%, 92%, 100% { opacity: 1; filter: none; }
+  93%           { opacity: 0.3; }
+  94%           { opacity: 1; }
+  96%           { opacity: 0.5; }
+  97%           { opacity: 1; }
+}
+.cb-fluo {
+  display: block;
+  animation: cb-fluo-flicker 4.6s linear infinite;
+}
+.cb-fluo__body {
+  animation: cb-fluo-hum 1.8s ease-in-out infinite;
+}
+@keyframes cb-fluo-hum {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.92; }
+}
+
+@keyframes cb-crt-flicker {
+  0%, 100% { opacity: 1; }
+  47%      { opacity: 0.7; }
+  53%      { opacity: 0.95; }
+  74%      { opacity: 0.82; }
+}
+@keyframes cb-steam {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50%      { transform: translateY(-3px); opacity: 0.8; }
+}
+
+// ---- neon sign component (drained roadside diner reveal) ------------------
+
+.cb-neon svg {
+  display: block;
+}
+
+// ---- absolution v2: verdict moment + filed receipt ------------------------
+
+.cb-abs-v2 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 4px;
+
+  &__ticket {
+    margin-left: auto;
+    color: @neon-yellow;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-shadow: 0 0 4px fade(@neon-yellow, 40%);
+  }
+
+  // ---- the verdict block: massive headline + stamp overlap -----------
+  &__verdict {
+    position: relative;
+    flex: 0 0 auto;
+    padding: 14px 0 16px;
+    margin-bottom: 2px;
+    overflow: hidden;
+
+    // Verdict-color wash bar across the top
+    &::before {
+      content: '';
+      position: absolute;
+      left: -20px; right: -20px;
+      top: 12px;
+      height: 4px;
+    }
+  }
+  &__verdict-stamp {
+    position: absolute;
+    right: -8px;
+    top: 4px;
+    z-index: 1;
+    pointer-events: none;
+    filter: drop-shadow(0 8px 16px fade(#000, 70%));
+  }
+  &__verdict-meta {
+    position: relative;
+    z-index: 2;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    color: fade(@brass-light, 75%);
+    text-transform: uppercase;
+  }
+  &__meta-key {
+    color: fade(@brass-light, 55%);
+  }
+  &__meta-val {
+    color: @candle;
+    font-weight: 700;
+  }
+  &__meta-sep {
+    width: 1px;
+    height: 10px;
+    background: fade(@brass, 35%);
+  }
+
+  // Verdict tint variants (page-level data attr drives the color accent)
+  &[data-verdict='ABSOLVED'] {
+    .cb-abs-v2__verdict::before { background: fade(@ruby, 70%); box-shadow: 0 0 12px fade(@ruby, 50%); }
+    .cb-crash--verdict .cb-crash__word { color: @candle; }
+  }
+  &[data-verdict='DENIED'] {
+    .cb-abs-v2__verdict::before { background: fade(@neon, 70%); box-shadow: 0 0 12px fade(@neon, 50%); }
+    .cb-crash--verdict .cb-crash__word { color: @neon; text-shadow: 0 0 12px fade(@neon, 40%), 0 2px 0 #000; }
+  }
+  &[data-verdict='DEFERRED'] {
+    .cb-abs-v2__verdict::before { background: fade(@lavender, 70%); box-shadow: 0 0 12px fade(@lavender, 50%); }
+    .cb-crash--verdict .cb-crash__word { color: @lavender; text-shadow: 0 0 12px fade(@lavender, 40%), 0 2px 0 #000; }
+  }
+
+  // ---- receipt wrap ---------------------------------------------------
+  &__receipt-wrap {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    margin: 12px 0 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+
+    scrollbar-width: thin;
+    scrollbar-color: fade(@brass, 35%) transparent;
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: fade(@brass, 30%); border-radius: 2px; }
+
+    .cb-receipt {
+      background: #f6e8c0;
+      box-shadow:
+        0 12px 24px fade(#000, 60%),
+        0 0 0 1px fade(@brass-dark, 30%);
+    }
+  }
+  &__pin {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;
+    filter: drop-shadow(0 2px 4px fade(#000, 60%));
+  }
+  &__coffee {
+    position: absolute;
+    top: 30px;
+    right: -16px;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  &__section-label {
+    margin: 6px 0 4px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: fade(@ink, 60%);
+    &--inline {
+      display: inline;
+      margin: 0;
+      letter-spacing: 0.18em;
+    }
+  }
+
+  &__sin-text {
+    margin: 0;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1.25;
+    color: @ink;
+    transform: rotate(-0.4deg);
+  }
+
+  &__sig {
+    margin: 6px 0 0;
+    text-align: right;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 18px;
+    color: @neon;
+    letter-spacing: 0.04em;
+    transform: rotate(-1deg);
+  }
+
+  &__penance {
+    margin: 14px 0 4px;
+    padding: 10px 12px;
+    background: fade(@brass, 18%);
+    border-left: 3px solid @brass-dark;
+    position: relative;
+  }
+  &__penance-text {
+    margin: 4px 0 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 16px;
+    color: @ink;
+  }
+
+  &__filed {
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    padding: 3px 8px;
+    border: 1.5px solid fade(@ruby, 70%);
+    border-radius: 2px;
+    color: fade(@ruby, 80%);
+    font-family: 'Big Shoulders Stencil Display', monospace;
+    font-weight: 900;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    transform: rotate(-8deg);
+    background: fade(#fff, 30%);
+  }
+
+  &__dock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid fade(@brass, 25%);
+  }
+}
+
+// Crash hero for the verdict screen — wide, off-axis under the stamp
+.cb-crash--verdict {
+  position: relative;
+  z-index: 2;
+  padding: 0;
+  top: auto;
+
+  .cb-crash__word {
+    font-size: 64px;
+    line-height: 0.86;
+    max-width: 70%;
+    display: block;
+    letter-spacing: -0.005em;
+  }
+}
+
+// ---- processing v2: on-hold call-center theatre ---------------------------
+
+.cb-proc-v2 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 6px;
+  align-items: stretch;
+
+  &__transom {
+    position: relative;
+    height: 70px;
+    flex: 0 0 auto;
+  }
+  &__transom-glass {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    filter: drop-shadow(0 0 10px fade(@amber, 18%));
+    opacity: 0.8;
+  }
+  &__transom-fluo {
+    position: absolute;
+    right: 6px;
+    top: 22px;
+    transform: rotate(-2deg);
+    animation: cb-fluo-flicker 4.6s linear infinite;
+  }
+
+  &__stage {
+    position: relative;
+    flex: 0 0 auto;
+    padding: 4px 6px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 8px 0 #000) drop-shadow(0 0 18px fade(@amber, 22%));
+  }
+  &__phone-wrap {
+    position: relative;
+  }
+  &__phone {
+    width: 200px;
+    height: 200px;
+    display: block;
+  }
+  &__handset {
+    transform-origin: 100px 90px;
+    &--ring {
+      animation: cb-phone-ring 0.42s ease-in-out infinite;
+    }
+  }
+  &__waves {
+    animation: cb-phone-waves 0.6s ease-in-out infinite alternate;
+  }
+
+  &__cassette {
+    position: absolute;
+    right: 4px;
+    top: 12px;
+    width: 100px;
+    transform: rotate(6deg);
+    filter: drop-shadow(0 4px 6px fade(#000, 60%));
+
+    svg {
+      display: block;
+      width: 100%;
+    }
+  }
+  &__cassette-label {
+    display: block;
+    margin-top: 4px;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: @brass-light;
+  }
+  &__reel {
+    animation: cb-reel-spin 1.8s linear infinite;
+    transform-box: fill-box;
+  }
+  &__reel--b {
+    animation-direction: reverse;
+  }
+
+  &__caller {
+    margin: 0 0 6px;
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #1a0f08;
+    border: 1px solid fade(@brass, 40%);
+    border-radius: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: @brass-light;
+    box-shadow: inset 0 0 0 1px fade(#fce6a3, 6%), 0 2px 0 #000;
+  }
+  &__caller-key {
+    color: fade(@brass-light, 55%);
+    font-weight: 500;
+  }
+  &__caller-val {
+    color: @candle;
+    font-weight: 700;
+    text-shadow: 0 0 3px fade(@neon-yellow, 30%);
+  }
+  &__caller-status {
+    color: @crt;
+    text-shadow: 0 0 5px fade(@crt, 60%);
+    margin-left: auto;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 10.5px;
+  }
+  &__caller-sep {
+    width: 1px;
+    height: 12px;
+    background: fade(@brass, 35%);
+  }
+
+  &__bar {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin: 4px 0 0;
+    padding: 8px 6px;
+    background: #1a0f08;
+    border: 1px solid fade(@brass, 30%);
+    border-radius: 2px;
+  }
+  &__seg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  &__seg-led {
+    width: 100%;
+    height: 6px;
+    background: fade(@brass-dark, 70%);
+    border-radius: 1px;
+    box-shadow: inset 0 0 0 0.5px #0a0703;
+  }
+  &__seg-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8.5px;
+    letter-spacing: 0.14em;
+    color: fade(@brass-light, 55%);
+    text-transform: uppercase;
+  }
+  &__seg--done {
+    .cb-proc-v2__seg-led {
+      background: @brass;
+      box-shadow: 0 0 3px fade(@brass, 50%);
+    }
+    .cb-proc-v2__seg-label {
+      color: fade(@brass-light, 70%);
+    }
+  }
+  &__seg--now {
+    .cb-proc-v2__seg-led {
+      background: @crt;
+      box-shadow: 0 0 8px @crt, 0 0 16px fade(@crt, 60%);
+      animation: cb-led-pulse 1.1s ease-in-out infinite;
+    }
+    .cb-proc-v2__seg-label {
+      color: @crt;
+      text-shadow: 0 0 4px fade(@crt, 60%);
+      font-weight: 700;
+    }
+  }
+
+  &__fineprint {
+    margin: auto 0 4px;
+    padding-top: 10px;
+    border-top: 1px dashed fade(@brass, 25%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: fade(@brass-light, 60%);
+    text-transform: uppercase;
+  }
+  &__fp-num {
+    color: @neon;
+    font-weight: 700;
+    text-shadow: 0 0 6px fade(@neon, 45%);
+    letter-spacing: 0.22em;
+  }
+  &__fp-sep {
+    width: 1px;
+    height: 9px;
+    background: fade(@brass, 30%);
+  }
+}
+
+@keyframes cb-reel-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Crash hero variant on the processing screen — stage word with trailing dots
+.cb-crash--proc {
+  position: relative;
+  top: auto;
+  padding: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+
+  .cb-crash__word {
+    font-size: 56px;
+    line-height: 0.86;
+  }
+  .cb-crash__dots {
+    flex: 0 0 auto;
+    color: @amber;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    letter-spacing: 0.2em;
+    white-space: pre;
+  }
+}
+
+// ---- typing v2: notepaper desk + operator post-it on grille ---------------
+
+.cb-typing-v2 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 6px;
+
+  &__timer {
+    margin-left: auto;
+    color: @neon-yellow;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-shadow: 0 0 4px fade(@neon-yellow, 60%);
+  }
+
+  &__transom {
+    position: relative;
+    height: 70px;
+    flex: 0 0 auto;
+  }
+  &__transom-glass {
+    position: absolute;
+    left: 4px;
+    top: 4px;
+    filter: drop-shadow(0 0 10px fade(@amber, 18%));
+    opacity: 0.85;
+  }
+  &__transom-fluo {
+    position: absolute;
+    right: 6px;
+    top: 22px;
+    transform: rotate(-2deg);
+    animation: cb-fluo-flicker 4.6s linear infinite;
+  }
+
+  &__rec {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-left: 6px;
+    padding: 4px 8px;
+    background: #1a0f08;
+    border: 1px solid fade(@neon, 50%);
+    border-radius: 2px;
+    color: @neon;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    align-self: flex-start;
+    box-shadow: 0 0 8px fade(@neon, 35%);
+  }
+  &__rec-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: @neon;
+    box-shadow: 0 0 6px @neon, 0 0 12px fade(@neon, 60%);
+    animation: cb-rec-blink 1.1s ease-in-out infinite;
+  }
+
+  &__grille-band {
+    position: relative;
+    height: 56px;
+    flex: 0 0 auto;
+    overflow: hidden;
+    border-top: 2px solid @brass-dark;
+    border-bottom: 2px solid @brass-dark;
+    background: #0a0703;
+    box-shadow: inset 0 0 16px fade(#000, 70%);
+  }
+  &__op-postit {
+    position: absolute;
+    top: 4px;
+    right: 14px;
+    z-index: 3;
+    background: #f3df6e;
+    color: #1a0f08;
+    padding: 3px 8px 5px;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1;
+    text-align: center;
+    transform: rotate(7deg);
+    box-shadow: 0 3px 8px fade(#000, 60%);
+    em {
+      font-style: italic;
+      font-size: 10px;
+      opacity: 0.7;
+    }
+  }
+
+  // Note paper "pulled down" from the booth bench desk
+  &__well {
+    position: relative;
+    flex: 1 1 auto;
+    margin: 6px 0 0;
+    min-height: 220px;
+    overflow: hidden;
+    border-radius: 2px;
+    box-shadow:
+      0 8px 24px fade(#000, 70%),
+      0 0 0 1px fade(@brass-dark, 40%),
+      inset 0 0 0 2px #1a0f08;
+  }
+  &__paper {
+    position: absolute;
+    inset: 0;
+    background:
+      // ruled blue lines
+      repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 30px,
+        fade(@cobalt, 24%) 30px,
+        fade(@cobalt, 24%) 31px
+      ),
+      // red left margin rule
+      linear-gradient(90deg, transparent 0 28px, fade(@neon, 35%) 28px, fade(@neon, 35%) 29.5px, transparent 29.5px),
+      // paper warm tint
+      linear-gradient(180deg, #f8efd6 0%, #ead9b0 100%);
+    z-index: 1;
+    // subtle paper grain (noise via gradient overlay)
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 20%, fade(#a87e3a, 14%) 0%, transparent 50%),
+                  radial-gradient(ellipse at 80% 80%, fade(#a87e3a, 12%) 0%, transparent 50%);
+      pointer-events: none;
+    }
+  }
+
+  &__input {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    padding: 14px 16px 40px 40px;
+    color: #1a0f08;
+    font-family: 'Caveat', 'Cormorant Garamond', serif;
+    font-size: 25px;
+    line-height: 30px; // matches ruled line spacing
+    resize: none;
+    caret-color: @neon;
+
+    &::placeholder {
+      color: fade(#1a0f08, 38%);
+      font-style: italic;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      line-height: 30px;
+    }
+  }
+
+  &__counter {
+    position: absolute;
+    z-index: 3;
+    right: 8px;
+    bottom: 6px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    padding: 3px 8px;
+    background: #0a0703;
+    border: 1px solid fade(@brass-dark, 80%);
+    border-radius: 2px;
+    box-shadow: 0 0 6px fade(@crt, 25%);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+  &__count-led {
+    color: @crt;
+    text-shadow: 0 0 4px fade(@crt, 80%);
+    min-width: 24px;
+    text-align: right;
+    &--over {
+      color: @neon;
+      text-shadow: 0 0 4px fade(@neon, 80%);
+    }
+  }
+  &__count-slash {
+    color: fade(@brass-light, 60%);
+  }
+  &__count-max {
+    color: fade(@brass-light, 75%);
+  }
+
+  &__error {
+    margin: 4px 0 0;
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: @neon;
+    letter-spacing: 0.04em;
+  }
+
+  &__dock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 10px;
+    border-top: 1px solid fade(@brass, 25%);
+  }
+}
+
+@keyframes cb-rec-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.3; }
+}
+
+// Crash hero variant for the typing screen — smaller than booth's
+.cb-crash--typing {
+  position: relative;
+  top: auto;
+  padding: 0;
+  font-size: 0;
+
+  .cb-crash__word {
+    font-size: 56px;
+    line-height: 0.86;
+  }
+  .cb-crash__rule {
+    flex: 0 0 4px;
+  }
+  .cb-crash__tag {
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+  }
+}
+
+// ---- wall v2: bulletin board ----------------------------------------------
+
+.cb-wall-v2 {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 4px;
+
+  &__hero {
+    position: relative;
+    padding: 12px 4px 4px;
+  }
+
+  &__empty {
+    margin: 30px auto;
+    color: fade(@candle, 60%);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  &__board {
+    list-style: none;
+    margin: 0;
+    padding: 8px 4px 28px;
+    flex: 1 1 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  &__item {
+    position: relative;
+    transition: transform 220ms ease;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+
+    .cb-receipt {
+      // Override receipt's straight torn edges for a more bulletin-board feel
+      background: #f6e8c0;
+      box-shadow:
+        0 14px 28px fade(#000, 65%),
+        0 0 0 1px fade(@brass-dark, 25%);
+    }
+
+    &:active { transform: translateY(1px) rotate(0deg) !important; }
+
+    // Top-pin variants leave room above for the pin decoration
+    &--pushpin {
+      margin-top: 12px;
+    }
+    &--staple {
+      margin-top: 6px;
+    }
+    &--tape {
+      margin-top: 14px;
+    }
+    &--punch {
+      margin-top: 8px;
+    }
+  }
+
+  // Attachment decoration positioned above/onto each card
+  &__attach {
+    position: absolute;
+    z-index: 5;
+    pointer-events: none;
+    line-height: 0;
+    filter: drop-shadow(0 2px 4px fade(#000, 50%));
+
+    &--pushpin {
+      top: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    &--staple {
+      top: -2px;
+      left: 16px;
+    }
+    &--tape {
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-2deg);
+      width: 80px;
+    }
+    &--punch {
+      top: -2px;
+      left: 14px;
+    }
+  }
+
+  // Stains on the cards
+  &__stain {
+    position: absolute;
+    pointer-events: none;
+    z-index: 3;
+    line-height: 0;
+
+    &--coffee {
+      top: -10px;
+      right: -8px;
+      transform: rotate(8deg);
+      opacity: 0.72;
+    }
+    &--ink {
+      bottom: 14px;
+      left: 8px;
+      transform: rotate(-22deg);
+      opacity: 0.7;
+    }
+    &--fold {
+      top: 0;
+      right: 0;
+    }
+    &--margin {
+      top: 8px;
+      right: 12px;
+      transform: rotate(8deg);
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+      font-size: 22px;
+      color: @neon;
+      text-shadow: 0 1px 0 fade(#fff, 50%);
+      line-height: 1;
+    }
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+  &__body { min-width: 0; }
+  &__stamp { flex: 0 0 auto; }
+
+  &__sin {
+    margin: 0 0 4px;
+    font-family: 'Caveat', cursive;
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.2;
+    color: @ink;
+    transform: rotate(-0.3deg);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  &__quip {
+    margin: 4px 0 4px;
+    font-family: 'Special Elite', monospace;
+    font-size: 12px;
+    color: fade(@ink, 80%);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &__anon {
+    margin: 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: fade(@ink, 50%);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  &__expand {
+    margin-top: 6px;
+    .cb-abs__reply-line { font-size: 13.5px; }
+  }
+  &__expand-line {
+    animation: cb-abs-line 280ms ease-out forwards;
+  }
+  &__expand-penance {
+    margin-top: 8px;
+    padding: 6px 10px;
+    background: fade(@brass, 14%);
+    border-left: 2px solid @brass-dark;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: @ink;
+  }
+
+  &__dock {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-top: 10px;
+    border-top: 1px solid fade(@brass, 25%);
+
+    .cb-key--primary { flex: 1 1 auto; }
+  }
+}
+
+// Wall hero uses the crash type with two stacked lines + horizontal rule
+.cb-crash--wall {
+  position: static;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 6px 0 0;
+  gap: 0;
+
+  .cb-crash__word {
+    font-size: 76px;
+    line-height: 0.84;
+
+    &--script {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      font-size: 46px;
+      color: @neon;
+      letter-spacing: -0.005em;
+      text-shadow: 0 0 10px fade(@neon, 45%), 0 2px 0 #000;
+      margin-top: -8px;
+      margin-left: 24px;
+    }
+  }
+}
+.cb-crash__rule--h {
+  position: absolute;
+  top: 22px;
+  left: -20px;
+  right: -20px;
+  height: 6px;
+  background: @neon;
+  box-shadow: 0 0 8px fade(@neon, 50%);
+}
+

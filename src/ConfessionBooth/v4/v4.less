@@ -1,0 +1,250 @@
+// ============================================================================
+//  v4 — Polish maximalist flat (Wolność / Festiwal Teatralny references)
+// ============================================================================
+//
+//   Palette: hot pink + coral + teal + lavender + cream + orange-dot on black
+//   Type: Archivo Black for display, Inter for body, IBM Plex Mono for nums
+//   Compositional moves: pill chips, geometric patterns as backdrop,
+//   orange-dot edition number, flat colors only — no gradients, no shadows.
+//
+// ============================================================================
+
+@v4-black:     #0a0a0a;
+@v4-cream:     #fce8c8;
+@v4-pink:      #ff4d8e;
+@v4-coral:     #ff7a4a;
+@v4-teal:      #3ed9b9;
+@v4-lavender:  #a888ff;
+@v4-yellow:    #ffd24a;
+@v4-orange:    #ff9a3c;
+@v4-cobalt:    #2a64f0;
+
+.cb-shell {
+  // override v3 wood backdrop for v4
+  background: @v4-black !important;
+}
+
+// the WoodPanel SVG that gets injected at root — hide it for v4
+.cb-shell > svg[aria-hidden]:first-of-type {
+  display: none;
+}
+
+// ---------------------------------------------------------------------------
+//  Pill chip
+// ---------------------------------------------------------------------------
+
+.cb4-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: 'Archivo Black', 'Inter', sans-serif;
+  font-weight: 900;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  color: @v4-black;
+  background: @v4-cream;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  touch-action: manipulation;
+  transition: transform 90ms ease-out, filter 120ms ease;
+  white-space: nowrap;
+
+  &:active { transform: scale(0.97); }
+
+  // Size variants
+  &--sm { padding: 6px 12px; font-size: 11px; }
+  &--md { padding: 10px 18px; font-size: 14px; }
+  &--lg { padding: 14px 22px; font-size: 16px; }
+  &--xl { padding: 18px 24px; font-size: 19px; letter-spacing: 0.08em; }
+
+  // Color variants — pure flat fills
+  &--pink     { background: @v4-pink;     color: @v4-black; }
+  &--coral    { background: @v4-coral;    color: @v4-black; }
+  &--teal     { background: @v4-teal;     color: @v4-black; }
+  &--lavender { background: @v4-lavender; color: @v4-black; }
+  &--cream    { background: @v4-cream;    color: @v4-black; }
+  &--yellow   { background: @v4-yellow;   color: @v4-black; }
+  &--black    { background: @v4-black;    color: @v4-cream; box-shadow: inset 0 0 0 2px @v4-cream; }
+
+  // Outlined variants — bordered, transparent fill
+  &--outline-cream {
+    background: transparent;
+    color: @v4-cream;
+    box-shadow: inset 0 0 0 2px @v4-cream;
+  }
+  &--outline-pink {
+    background: transparent;
+    color: @v4-pink;
+    box-shadow: inset 0 0 0 2px @v4-pink;
+  }
+
+  &--full { width: 100%; }
+}
+
+// ---------------------------------------------------------------------------
+//  Number dot
+// ---------------------------------------------------------------------------
+
+.cb4-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-family: 'Archivo Black', sans-serif;
+  font-weight: 900;
+  color: @v4-black;
+  background: @v4-orange;
+  letter-spacing: 0;
+
+  &--sm { width: 22px; height: 22px; font-size: 11px; }
+  &--md { width: 32px; height: 32px; font-size: 14px; }
+  &--lg { width: 44px; height: 44px; font-size: 19px; }
+
+  &--orange   { background: @v4-orange;   color: @v4-black; }
+  &--pink     { background: @v4-pink;     color: @v4-black; }
+  &--teal     { background: @v4-teal;     color: @v4-black; }
+  &--lavender { background: @v4-lavender; color: @v4-black; }
+  &--yellow   { background: @v4-yellow;   color: @v4-black; }
+  &--cream    { background: @v4-cream;    color: @v4-black; }
+}
+
+// ---------------------------------------------------------------------------
+//  BoothScreen V4
+// ---------------------------------------------------------------------------
+
+.cb4-booth {
+  width: 100%;
+  height: 100%;
+  background: @v4-black;
+  color: @v4-cream;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+
+  &__head {
+    padding: 14px 22px 10px;
+    flex: 0 0 auto;
+  }
+  &__head-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    color: @v4-cream;
+    text-transform: uppercase;
+  }
+  &__head-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: @v4-coral;
+    box-shadow: 0 0 6px fade(@v4-coral, 70%);
+    animation: cb4-pulse 1.8s ease-in-out infinite;
+  }
+
+  &__hero {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &__hero-pattern {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  &__hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__wordmark {
+    background: @v4-teal;
+    color: @v4-black;
+    padding: 18px 26px 22px;
+    border-radius: 14px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 0 4px @v4-black;
+    transform: rotate(-2deg);
+  }
+  &__wordmark-text {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 52px;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+  }
+  &__wordmark-tag {
+    margin-top: 4px;
+    padding: 3px 12px;
+    background: @v4-pink;
+    color: @v4-black;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    border-radius: 999px;
+  }
+
+  &__edition {
+    transform: translate(-12px, -36px);
+    box-shadow: 0 0 0 4px @v4-black;
+  }
+
+  &__chips {
+    flex: 0 0 auto;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+
+    .cb4-pill {
+      max-width: 100%;
+      white-space: normal;
+      text-align: center;
+      line-height: 1.2;
+    }
+  }
+
+  &__divider {
+    flex: 0 0 auto;
+    height: 48px;
+    overflow: hidden;
+    position: relative;
+  }
+  &__divider-tile {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__cta {
+    flex: 0 0 auto;
+    padding: 18px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+@keyframes cb4-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
