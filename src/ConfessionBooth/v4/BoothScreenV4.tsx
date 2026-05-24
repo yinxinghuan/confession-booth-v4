@@ -64,13 +64,13 @@ export default function BoothScreenV4({ weekCount, onEnter, onWall }: Props) {
 
   return (
     <div className="cb4-booth">
-      <Zigzag color="#a888ff" accent="#ff4d8e" bg="#0a0a0a" cols={14} className="cb4-booth__pattern" />
+      <Zigzag color="#a888ff" accent="#a888ff" bg="#0a0a0a" cols={14} className="cb4-booth__pattern" />
       <Confetti
         width={400}
         height={840}
-        count={22}
-        colors={['#ff9a3c', '#fce8c8', '#3ed9b9', '#ffd24a']}
-        rRange={[3, 7]}
+        count={16}
+        colors={['#ff9a3c', '#fce8c8']}
+        rRange={[3, 6]}
         seed={11}
         className="cb4-booth__confetti"
       />
@@ -104,6 +104,7 @@ export default function BoothScreenV4({ weekCount, onEnter, onWall }: Props) {
             subVariant="pink"
             size={wordSize}
             tilt={-3}
+            sparkle={false}
           />
         </button>
         <NumberDot value="7" color="orange" size="lg" className="cb4-booth__edition" />

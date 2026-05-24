@@ -140,8 +140,8 @@
   flex-direction: column;
   align-items: center;
   gap: 4px;
-  padding: 14px 28px 12px;
-  border-radius: 22px;
+  padding: 12px 22px 14px;
+  border-radius: 18px;
   box-shadow: 0 0 0 @halo @v4-black;
 
   &--teal     { background: @v4-teal;     color: @v4-black; }
@@ -370,4 +370,822 @@
 @keyframes cb4-pulse {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.4; }
+}
+
+// ---------------------------------------------------------------------------
+//  TypingScreen v4 — Wolność Panel 2 (multi-pill stack on dense V-zigzag)
+// ---------------------------------------------------------------------------
+
+.cb4-typing {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: @v4-black;
+  color: @v4-cream;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+
+  &__pattern { position: absolute; inset: 0; width: 100%; height: 100%; }
+  &__confetti { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+  &__head {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  &__head-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: @v4-coral;
+    box-shadow: 0 0 6px fade(@v4-coral, 70%);
+    animation: cb4-pulse 1.6s ease-in-out infinite;
+  }
+  &__head-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: @v4-cream;
+    text-transform: uppercase;
+  }
+
+  &__back {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    z-index: 5;
+    padding: 6px 12px;
+    background: @v4-cream;
+    color: @v4-black;
+    border: 0;
+    border-radius: 999px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    box-shadow: 0 0 0 3px @v4-black;
+    cursor: pointer;
+    text-transform: uppercase;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 90ms ease-out;
+    &:active { transform: scale(0.95); }
+  }
+
+  &__stack {
+    position: absolute;
+    inset: 56px 18px 18px 18px;
+    z-index: 4;
+    display: grid;
+    // [prompts] [textarea fills middle] [send]
+    grid-template-rows: auto 1fr auto;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  &__prompts {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+  }
+  &__prompt-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
+
+  // The big cream textarea pill — the heart of the screen
+  &__page-wrap {
+    position: relative;
+    min-height: 0; // grid row controls; allow shrink
+  }
+  &__page {
+    width: 100%;
+    height: 100%;
+    background: @v4-cream;
+    color: @v4-black;
+    border: 0;
+    border-radius: 22px;
+    box-shadow: 0 0 0 @halo @v4-black;
+    outline: none;
+    resize: none;
+    padding: 18px 22px 30px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 1.35;
+    letter-spacing: -0.005em;
+
+    &::placeholder {
+      color: fade(@v4-black, 35%);
+      font-style: italic;
+      font-weight: 400;
+    }
+  }
+  &__counter {
+    position: absolute;
+    right: 12px;
+    bottom: 10px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 4px;
+    z-index: 2;
+  }
+  &__counter-max {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: fade(@v4-black, 55%);
+    background: @v4-cream;
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
+
+  &__error-row {
+    display: flex;
+    justify-content: center;
+  }
+
+  // SEND row — the bottom action
+  &__send-row {
+    display: flex;
+    justify-content: center;
+    padding-top: 4px;
+  }
+  &__send {
+    display: inline-grid;
+    grid-template-columns: auto 1fr;
+    align-items: stretch;
+    padding: 0;
+    border: 0;
+    background: @v4-coral;
+    color: @v4-black;
+    border-radius: 999px;
+    box-shadow: 0 0 0 @halo @v4-black;
+    cursor: pointer;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 90ms ease-out;
+
+    &:active:not(:disabled) { transform: scale(0.97); }
+
+    &--disabled, &:disabled {
+      opacity: 0.55;
+      filter: saturate(0.4);
+      cursor: not-allowed;
+    }
+  }
+  &__send-arrow {
+    background: @v4-pink;
+    color: @v4-black;
+    padding: 14px 20px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 22px;
+    line-height: 1;
+    box-shadow: @halo 0 0 @v4-black;
+  }
+  &__send-label {
+    padding: 14px 20px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  ProcessingScreen v4 — Wolność Panel 3 (sunburst + center dot + big pill)
+// ---------------------------------------------------------------------------
+
+.cb4-proc {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: @v4-black;
+  color: @v4-cream;
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &__pattern {
+    position: absolute;
+    // overscan so a future rotation can't reveal the corners
+    top: -10%; left: -10%; right: -10%; bottom: -10%;
+    width: 120%;
+    height: 120%;
+  }
+
+  &__head {
+    position: absolute;
+    top: 14px;
+    left: 18px;
+    right: 18px;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  &__head-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: @v4-cream;
+    box-shadow: 0 0 6px fade(@v4-cream, 70%);
+    animation: cb4-pulse 1.4s ease-in-out infinite;
+  }
+  &__head-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: @v4-cream;
+    text-transform: uppercase;
+  }
+
+  // Center phone-icon dot
+  &__logo {
+    position: relative;
+    z-index: 5;
+    margin-bottom: 24px;
+    filter: drop-shadow(0 0 0 #0a0a0a);
+
+    &--ring {
+      animation: cb4-ring-shake 0.4s ease-in-out infinite;
+    }
+  }
+
+  // Big status pill swaps text + color per stage
+  &__status-wrap {
+    position: relative;
+    z-index: 5;
+    margin-bottom: 16px;
+  }
+  &__status {
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-size: 36px;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    padding: 16px 32px 18px;
+  }
+  &__status-dots {
+    margin-left: 8px;
+    color: @v4-black;
+    opacity: 0.5;
+    width: 16px;
+    display: inline-block;
+    text-align: left;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  // 5 step dots
+  &__steps {
+    position: relative;
+    z-index: 5;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+  &__step {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: @v4-black;
+    box-shadow: 0 0 0 3px @v4-cream;
+    transition: background 220ms ease;
+
+    &--done {
+      background: @v4-orange;
+    }
+    &--now {
+      background: @v4-orange;
+      animation: cb4-pulse 0.9s ease-in-out infinite;
+      box-shadow: 0 0 0 3px @v4-cream, 0 0 12px fade(@v4-orange, 80%);
+    }
+  }
+
+  // Caller ID strip at bottom
+  &__caller {
+    position: absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px 6px 6px;
+    background: @v4-black;
+    color: @v4-cream;
+    border-radius: 999px;
+    box-shadow: 0 0 0 3px @v4-cream;
+  }
+  &__caller-key {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: fade(@v4-cream, 55%);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  &__caller-val {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 12px;
+    color: @v4-cream;
+  }
+  &__caller-fineprint {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 10.5px;
+    color: @v4-pink;
+    letter-spacing: 0.18em;
+  }
+  &__caller-sep {
+    width: 1px;
+    height: 12px;
+    background: fade(@v4-cream, 35%);
+  }
+}
+
+@keyframes cb4-spin {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes cb4-ring-shake {
+  0%, 100% { transform: rotate(-6deg); }
+  50%      { transform: rotate(6deg); }
+}
+
+// ---------------------------------------------------------------------------
+//  AbsolutionScreen v4 — Wolność Panel 5 (rainbow arc + pill stack inside)
+// ---------------------------------------------------------------------------
+
+.cb4-abs {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: @v4-black;
+  color: @v4-cream;
+  font-family: 'Inter', sans-serif;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+
+  scrollbar-width: thin;
+  scrollbar-color: fade(@v4-cream, 25%) transparent;
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: fade(@v4-cream, 25%); border-radius: 2px; }
+
+  &__head {
+    flex: 0 0 auto;
+    padding: 14px 18px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  &__head-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: @v4-cream;
+    box-shadow: 0 0 6px fade(@v4-cream, 70%);
+    animation: cb4-pulse 1.4s ease-in-out infinite;
+  }
+  &__head-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: @v4-cream;
+    text-transform: uppercase;
+  }
+  &__ticket {
+    margin-left: auto;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 11px;
+    color: @v4-orange;
+    letter-spacing: 0.14em;
+  }
+
+  // Arc frame + content
+  &__arc-wrap {
+    position: relative;
+    flex: 0 0 auto;
+    min-height: 320px;
+    padding: 12px 0 24px;
+  }
+  &__arc {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  &__arc-content {
+    position: relative;
+    z-index: 2;
+    padding: 24px 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    height: 100%;
+    justify-content: center;
+  }
+  &__meta-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  &__sin-row {
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+  }
+  &__sin-pill {
+    white-space: normal !important;
+    text-align: center;
+    line-height: 1.25;
+    max-width: 100%;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 700 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 14px !important;
+    padding: 10px 16px !important;
+  }
+  &__verdict-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 4px;
+  }
+  &__verdict-pill {
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif !important;
+    font-size: 28px !important;
+    letter-spacing: 0.02em !important;
+    padding: 14px 28px !important;
+  }
+
+  // Below the arc
+  &__below {
+    flex: 0 0 auto;
+    padding: 16px 18px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  &__section-label {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: fade(@v4-cream, 65%);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  &__reply {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  &__reply-line {
+    margin-bottom: 4px;
+    white-space: normal !important;
+    text-align: left !important;
+    line-height: 1.3;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 13px !important;
+    padding: 7px 14px !important;
+    justify-content: flex-start !important;
+    border-radius: 14px !important;
+  }
+  &__penance {
+    margin-top: 4px;
+  }
+  &__penance-pill {
+    white-space: normal !important;
+    text-align: center !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 700 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 14px !important;
+    padding: 10px 16px !important;
+    width: 100%;
+  }
+
+  // Dock
+  &__dock {
+    flex: 0 0 auto;
+    padding: 6px 18px 18px;
+    display: flex;
+    gap: 10px;
+  }
+  &__dock-secondary {
+    padding: 14px 22px;
+    background: transparent;
+    color: @v4-cream;
+    border: 0;
+    border-radius: 999px;
+    box-shadow: inset 0 0 0 @halo @v4-cream;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 90ms ease-out;
+    &:active { transform: scale(0.96); }
+  }
+  &__dock-primary {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: stretch;
+    padding: 0;
+    background: @v4-coral;
+    border: 0;
+    border-radius: 999px;
+    box-shadow: 0 0 0 @halo @v4-black;
+    cursor: pointer;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 90ms ease-out;
+    &:active { transform: scale(0.97); }
+  }
+  &__dock-arrow {
+    background: @v4-pink;
+    color: @v4-black;
+    padding: 14px 18px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 20px;
+    line-height: 1;
+    box-shadow: @halo 0 0 @v4-black;
+  }
+  &__dock-label {
+    padding: 14px 18px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: @v4-black;
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  WallScreen v4 — Wolność Panel 7 (medallion grid with mini sunbursts)
+// ---------------------------------------------------------------------------
+
+.cb4-wall {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: @v4-black;
+  color: @v4-cream;
+  font-family: 'Inter', sans-serif;
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+
+  scrollbar-width: thin;
+  scrollbar-color: fade(@v4-cream, 25%) transparent;
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: fade(@v4-cream, 25%); border-radius: 2px; }
+
+  &__confetti {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  &__head {
+    flex: 0 0 auto;
+    padding: 14px 18px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    position: relative;
+    z-index: 4;
+  }
+  &__back {
+    padding: 6px 12px;
+    background: @v4-cream;
+    color: @v4-black;
+    border: 0;
+    border-radius: 999px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    box-shadow: 0 0 0 3px @v4-black;
+    cursor: pointer;
+    text-transform: uppercase;
+    -webkit-tap-highlight-color: transparent;
+  }
+  &__title {
+    margin: 0;
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-size: 18px;
+    line-height: 0.95;
+    letter-spacing: 0.01em;
+    color: @v4-cream;
+    text-align: right;
+    max-width: 60%;
+  }
+
+  &__empty {
+    margin: auto;
+    text-align: center;
+    color: fade(@v4-cream, 60%);
+    padding: 30px 20px;
+  }
+
+  &__grid {
+    list-style: none;
+    margin: 0;
+    padding: 8px 14px 18px;
+    flex: 1 1 auto;
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  &__card {
+    position: relative;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    background: transparent;
+    transition: transform 200ms ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+
+    &:nth-child(odd) { transform: rotate(-1.5deg); }
+    &:nth-child(even) { transform: rotate(1.5deg); }
+
+    &:active { transform: scale(0.97); }
+
+    &--open {
+      grid-column: 1 / -1;
+      transform: rotate(0deg) !important;
+
+      .cb4-wall__medallion {
+        width: 90px;
+        height: 90px;
+      }
+    }
+  }
+
+  // The portrait-medallion area — mini sunburst + verdict dot
+  &__medallion {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    max-width: 130px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 0 3px @v4-black, 0 0 0 6px @v4-cream;
+    flex: 0 0 auto;
+  }
+  &__medallion-burst {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  &__verdict-dot {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 56%;
+    height: 56%;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-size: 32px;
+    color: @v4-black;
+    box-shadow: 0 0 0 3px @v4-black;
+
+    &--pink     { background: @v4-pink;     }
+    &--coral    { background: @v4-coral;    }
+    &--lavender { background: @v4-lavender; }
+  }
+
+  &__card-body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  &__card-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  &__card-anon {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    color: fade(@v4-cream, 70%);
+    text-transform: uppercase;
+  }
+  &__sin-chip {
+    white-space: normal !important;
+    text-align: center !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+    padding: 7px 12px !important;
+    max-width: 100%;
+    display: block;
+  }
+
+  &__expand {
+    margin-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+  }
+  &__expand-line {
+    white-space: normal !important;
+    text-align: left !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-size: 12.5px !important;
+    line-height: 1.3 !important;
+    padding: 6px 12px !important;
+    justify-content: flex-start !important;
+    border-radius: 14px !important;
+  }
+
+  &__dock {
+    flex: 0 0 auto;
+    padding: 8px 18px 18px;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 4;
+  }
+  &__dock-primary {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: stretch;
+    padding: 0;
+    background: @v4-coral;
+    border: 0;
+    border-radius: 999px;
+    box-shadow: 0 0 0 @halo @v4-black;
+    cursor: pointer;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 90ms ease-out;
+    &:active { transform: scale(0.97); }
+  }
+  &__dock-arrow {
+    background: @v4-pink;
+    color: @v4-black;
+    padding: 14px 18px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 20px;
+    line-height: 1;
+    box-shadow: @halo 0 0 @v4-black;
+  }
+  &__dock-label {
+    padding: 14px 22px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: @v4-black;
+  }
 }

@@ -27,7 +27,7 @@ export default function Sunburst({
   const vbH = 320;
   const cx = (origin?.x ?? 0.5) * vbW;
   const cy = (origin?.y ?? 0.5) * vbH;
-  const r = vbW * 1.4; // ray length, far beyond the box so it fills
+  const r = vbW * 4; // ray length WAY past viewBox so adjacent ray chords don't leave black wedges in corners
 
   return (
     <svg
@@ -35,7 +35,7 @@ export default function Sunburst({
       width={width}
       height={height}
       viewBox={`0 0 ${vbW} ${vbH}`}
-      preserveAspectRatio="xMidYMid slice"
+      preserveAspectRatio="none"
       aria-hidden
     >
       <rect width={vbW} height={vbH} fill={bg} />

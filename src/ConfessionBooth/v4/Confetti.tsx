@@ -41,7 +41,7 @@ export default function Confetti({
     y: r() * height,
     rad: rRange[0] + r() * (rRange[1] - rRange[0]),
     c: colors[Math.floor(r() * colors.length)],
-    star: r() > 0.78, // 22% become 4-point stars instead of dots
+    star: false, // Wolność uses circular dots, no ✦ stars
   }));
 
   return (
