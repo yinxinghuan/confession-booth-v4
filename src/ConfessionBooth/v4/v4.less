@@ -383,6 +383,235 @@
 }
 
 // ---------------------------------------------------------------------------
+//  Unified Top Nav — meta strip + back button + jump button
+// ---------------------------------------------------------------------------
+
+.cb4-nav {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  pointer-events: none; // children re-enable
+
+  > * { pointer-events: auto; }
+
+  &__meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 4px 4px 0;
+  }
+  &__meta-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: @v4-coral;
+    box-shadow: 0 0 6px fade(@v4-coral, 70%);
+    animation: cb4-pulse 1.8s ease-in-out infinite;
+  }
+  &__meta-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    color: @v4-cream;
+    text-transform: uppercase;
+  }
+
+  // Back button — cream pill, left arrow first
+  &__back, &__jump {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 999px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 90ms ease-out, box-shadow 90ms ease-out;
+    color: @v4-black;
+  }
+  &__back {
+    background: @v4-cream;
+    box-shadow: 0 0 0 3px @v4-black, 0 4px 0 #0a0a0a;
+    &:active {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 3px @v4-black, 0 2px 0 #0a0a0a;
+    }
+  }
+  &__jump {
+    background: @v4-yellow;
+    box-shadow: 0 0 0 3px @v4-black, 0 4px 0 #0a0a0a;
+    &:active {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 3px @v4-black, 0 2px 0 #0a0a0a;
+    }
+  }
+  &__arrow {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 14px;
+    line-height: 1;
+  }
+}
+
+// ---------------------------------------------------------------------------
+//  Wall modal — full-screen overlay when a card is tapped
+// ---------------------------------------------------------------------------
+
+.cb4-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: fade(#0a0a0a, 92%);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  display: flex;
+  flex-direction: column;
+  animation: cb4-modal-in 280ms ease-out;
+
+  &__head {
+    flex: 0 0 auto;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+  &__close {
+    padding: 10px 16px;
+    background: @v4-cream;
+    color: @v4-black;
+    border: 0;
+    border-radius: 999px;
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    box-shadow: 0 0 0 3px @v4-black, 0 4px 0 #0a0a0a;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 90ms ease-out, box-shadow 90ms ease-out;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    &:active {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 3px @v4-black, 0 2px 0 #0a0a0a;
+    }
+  }
+  &__ticket {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 13px;
+    color: @v4-orange;
+    letter-spacing: 0.14em;
+  }
+
+  &__body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px 18px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    scrollbar-width: thin;
+    scrollbar-color: fade(@v4-cream, 25%) transparent;
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb { background: fade(@v4-cream, 25%); border-radius: 2px; }
+  }
+
+  // Mini medallion at top of modal — same style as the wall card medallion
+  &__medallion {
+    margin: 6px auto 8px;
+    width: 96px;
+    height: 96px;
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 0 3px @v4-black, 0 0 0 6px @v4-cream;
+    flex: 0 0 auto;
+  }
+  &__verdict-pill {
+    align-self: center;
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif !important;
+    font-size: 32px !important;
+    letter-spacing: 0.01em !important;
+    padding: 14px 24px !important;
+    box-shadow: 0 0 0 4px @v4-black, 0 5px 0 #0a0a0a !important;
+  }
+
+  &__section-label {
+    display: block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    color: fade(@v4-cream, 65%);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  &__sin-bubble {
+    background: @v4-cream;
+    color: @v4-black;
+    border-radius: 22px;
+    box-shadow: 0 0 0 4px @v4-black;
+    padding: 14px 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 16px;
+    line-height: 1.35;
+  }
+  &__reply-bubble {
+    background: @v4-yellow;
+    color: @v4-black;
+    border-radius: 22px;
+    box-shadow: 0 0 0 4px @v4-black;
+    padding: 14px 18px;
+  }
+  &__reply-line {
+    margin: 0 0 6px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14.5px;
+    line-height: 1.4;
+    &:last-child {
+      margin-bottom: 0;
+      font-style: italic;
+      color: fade(@v4-black, 75%);
+      padding-top: 4px;
+      border-top: 1px dashed fade(@v4-black, 25%);
+      margin-top: 8px;
+    }
+  }
+  &__penance-bubble {
+    background: @v4-coral;
+    color: @v4-black;
+    border-radius: 22px;
+    box-shadow: 0 0 0 4px @v4-black;
+    padding: 14px 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.35;
+    text-align: center;
+  }
+}
+@keyframes cb4-modal-in {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+// ---------------------------------------------------------------------------
 //  TypingScreen v4 — Wolność Panel 2 (multi-pill stack on dense V-zigzag)
 // ---------------------------------------------------------------------------
 
@@ -447,10 +676,10 @@
 
   &__stack {
     position: absolute;
-    inset: 56px 18px 18px 18px;
+    // leave room for the unified TopNav (back button)
+    inset: 70px 18px 18px 18px;
     z-index: 4;
     display: grid;
-    // [prompts] [textarea fills middle] [send]
     grid-template-rows: auto 1fr auto;
     gap: 12px;
     align-items: stretch;
@@ -809,7 +1038,7 @@
     position: relative;
     flex: 0 0 auto;
     min-height: 320px;
-    padding: 12px 0 24px;
+    padding: 64px 0 24px;
   }
   &__arc {
     position: absolute;
@@ -1017,39 +1246,23 @@
     pointer-events: none;
   }
 
-  &__head {
+  &__title-row {
     flex: 0 0 auto;
-    padding: 14px 18px 8px;
+    padding: 70px 18px 6px;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: center;
     position: relative;
     z-index: 4;
-  }
-  &__back {
-    padding: 6px 12px;
-    background: @v4-cream;
-    color: @v4-black;
-    border: 0;
-    border-radius: 999px;
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 11px;
-    letter-spacing: 0.16em;
-    box-shadow: 0 0 0 3px @v4-black;
-    cursor: pointer;
-    text-transform: uppercase;
-    -webkit-tap-highlight-color: transparent;
   }
   &__title {
     margin: 0;
     font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
-    font-size: 18px;
+    font-size: 26px;
     line-height: 0.95;
     letter-spacing: 0.01em;
     color: @v4-cream;
-    text-align: right;
-    max-width: 60%;
+    text-align: center;
   }
 
   &__empty {
@@ -1086,17 +1299,7 @@
     &:nth-child(odd) { transform: rotate(-1.5deg); }
     &:nth-child(even) { transform: rotate(1.5deg); }
 
-    &:active { transform: scale(0.97); }
-
-    &--open {
-      grid-column: 1 / -1;
-      transform: rotate(0deg) !important;
-
-      .cb4-wall__medallion {
-        width: 90px;
-        height: 90px;
-      }
-    }
+    &:active { transform: scale(0.97) rotate(0deg); }
   }
 
   // The portrait-medallion area — mini sunburst + verdict dot

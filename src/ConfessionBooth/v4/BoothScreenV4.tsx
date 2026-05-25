@@ -1,5 +1,6 @@
 import NumberDot from './NumberDot';
 import Wordmark from './Wordmark';
+import TopNav from './TopNav';
 import Zigzag from './patterns/Zigzag';
 import Confetti from './Confetti';
 import { t, getLocale } from '../i18n';
@@ -75,20 +76,10 @@ export default function BoothScreenV4({ weekCount, onEnter, onWall }: Props) {
         className="cb4-booth__confetti"
       />
 
-      {/* Tiny meta line top */}
-      <header className="cb4-booth__head">
-        <span className="cb4-booth__head-dot" />
-        <span className="cb4-booth__head-text">ALTERU · 1-800-CONFESS</span>
-      </header>
-
-      {/* Wall jump — tiny corner chip, won't fight the poster */}
-      <button
-        type="button"
-        className="cb4-booth__wall-link"
-        onPointerDown={(e) => { e.preventDefault(); onWall(); }}
-      >
-        ↘ {wallLabel}
-      </button>
+      <TopNav
+        left={{ kind: 'meta', text: 'ALTERU · 1-800-CONFESS' }}
+        right={{ label: wallLabel, onClick: onWall }}
+      />
 
       {/* The plate IS the ENTER button — tap to enter. Edition dot lives
           INSIDE the plate-btn so it positions relative to the plate not

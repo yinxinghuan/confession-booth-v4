@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import Pill from './Pill';
 import NumberDot from './NumberDot';
 import ArrowChip from './ArrowChip';
+import TopNav from './TopNav';
 import RainbowArc from './patterns/RainbowArc';
 import { t, getLocale } from '../i18n';
 import { playStampThud } from '../utils/audio';
@@ -53,11 +54,7 @@ export default function AbsolutionScreenV4({ confession, onAnother, onWall, slam
 
   return (
     <div className="cb4-abs" data-verdict={confession.verdict}>
-      <header className="cb4-abs__head">
-        <span className="cb4-abs__head-dot" />
-        <span className="cb4-abs__head-text">{t('meta_receipt')}</span>
-        <span className="cb4-abs__ticket">{confession.ticketNumber}</span>
-      </header>
+      <TopNav left={{ kind: 'meta', text: `${t('meta_receipt')} · ${confession.ticketNumber}` }} />
 
       {/* Arc frame + content */}
       <section className="cb4-abs__arc-wrap">

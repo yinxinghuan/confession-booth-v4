@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Pill from './Pill';
 import ArrowChip from './ArrowChip';
 import NumberDot from './NumberDot';
+import TopNav from './TopNav';
 import Zigzag from './patterns/Zigzag';
 import Confetti from './Confetti';
 import { t, getLocale } from '../i18n';
@@ -85,14 +86,7 @@ export default function TypingScreenV4({ onSubmit, onBack }: Props) {
       <Zigzag color="#ff4d8e" accent="#ff7a4a" bg="#0a0a0a" cols={16} className="cb4-typing__pattern" />
       <Confetti width={400} height={840} count={14} colors={['#fce8c8', '#ffd24a']} rRange={[3, 5]} seed={23} className="cb4-typing__confetti" />
 
-      <header className="cb4-typing__head">
-        <span className="cb4-typing__head-dot" />
-        <span className="cb4-typing__head-text">{t('meta_call')}</span>
-      </header>
-
-      <button type="button" className="cb4-typing__back" onPointerDown={(e) => { e.preventDefault(); onBack(); }}>
-        ↖ {backLabel}
-      </button>
+      <TopNav left={{ kind: 'back', label: backLabel, onBack }} />
 
       <div className="cb4-typing__stack">
         {/* Prompt pill rows (2 rows) */}

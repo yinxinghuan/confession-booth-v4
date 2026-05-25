@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import Pill from './Pill';
 import NumberDot from './NumberDot';
+import TopNav from './TopNav';
 import Sunburst from './patterns/Sunburst';
 import Confetti from './Confetti';
 import { t, getLocale } from '../i18n';
@@ -26,10 +26,11 @@ const CONFESS_NOW: Record<string, string> = {
   en: 'CONFESS', zh: '现在忏悔', es: 'CONFESARSE', pt: 'CONFESSAR',
   ru: 'ИСПОВЕДЬ', ja: '告解する', ko: '고백하기', fr: 'CONFESSE',
 };
+const CLOSE: Record<string, string> = {
+  en: 'CLOSE', zh: '关闭', es: 'CERRAR', pt: 'FECHAR',
+  ru: 'ЗАКРЫТЬ', ja: '閉じる', ko: '닫기', fr: 'FERMER',
+};
 
-// Per-card sunburst palettes — each medallion gets its own color combo
-// (the Wolność portraits do this — each has a different multi-color burst
-// behind it).
 const SUNBURST_PALETTES: string[][] = [
   ['#ff4d8e', '#ffd24a'],
   ['#a888ff', '#3ed9b9'],
@@ -45,19 +46,21 @@ const VERDICT_COLOR: Record<Verdict, 'pink' | 'coral' | 'lavender'> = {
   DEFERRED: 'lavender',
 };
 
-// Wall = Wolność Panel 7: irregular grid of "portraits" with mini sunbursts.
-// Each confession card adapts the portrait medallion structure:
-//   - mini sunburst behind the card
-//   - center "verdict dot" replaces the B&W portrait (anonymous)
-//   - ticket# pill on top
-//   - short sin chip below
-//   - tap to expand → shows operator reply
+const VERDICT_WORD: Record<Verdict, Record<string, string>> = {
+  ABSOLVED: { en: 'ABSOLVED', zh: '已赦免', es: 'ABSUELTO', pt: 'ABSOLVIDO', ru: 'ПРОЩЁН', ja: '赦免', ko: '사함받음', fr: 'ABSOUS' },
+  DENIED: { en: 'DENIED', zh: '驳回', es: 'NEGADO', pt: 'NEGADO', ru: 'ОТКЛОНЕНО', ja: '却下', ko: '거부', fr: 'REFUSÉ' },
+  DEFERRED: { en: 'DEFERRED', zh: '延审', es: 'APLAZADO', pt: 'ADIADO', ru: 'ОТЛОЖЕНО', ja: '保留', ko: '보류', fr: 'REPORTÉ' },
+};
+
 export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Props) {
   const [openId, setOpenId] = useState<string | null>(null);
   const loc = getLocale();
   const title = TITLE[loc] ?? TITLE.en;
   const backLabel = BACK[loc] ?? BACK.en;
   const confessLabel = CONFESS_NOW[loc] ?? CONFESS_NOW.en;
+  const closeLabel = CLOSE[loc] ?? CLOSE.en;
+
+  const opened = entries.find((c) => c.id === openId);
 
   return (
     <div className="cb4-wall">
@@ -71,10 +74,9 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
         className="cb4-wall__confetti"
       />
 
-      <header className="cb4-wall__head">
-        <button type="button" className="cb4-wall__back" onPointerDown={(e) => { e.preventDefault(); onBack(); }}>
-          ↖ {backLabel}
-        </button>
+      <TopNav left={{ kind: 'back', label: backLabel, onBack }} />
+
+      <header className="cb4-wall__title-row">
         <h1 className="cb4-wall__title">{title}</h1>
       </header>
 
@@ -87,17 +89,16 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
       ) : (
         <ol className="cb4-wall__grid">
           {entries.map((c, i) => {
-            const open = openId === c.id;
             const palette = SUNBURST_PALETTES[i % SUNBURST_PALETTES.length];
             const dotColor = VERDICT_COLOR[c.verdict];
 
             return (
               <li
                 key={c.id}
-                className={`cb4-wall__card ${open ? 'cb4-wall__card--open' : ''}`}
+                className="cb4-wall__card"
                 onPointerDown={(e) => {
                   e.preventDefault();
-                  setOpenId(open ? null : c.id);
+                  setOpenId(c.id);
                 }}
               >
                 <div className="cb4-wall__medallion">
@@ -121,23 +122,8 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
                   <div className="cb4-wall__sin-chip">
                     &ldquo;{c.sin}&rdquo;
                   </div>
-                  <span className="cb4-wall__expand-hint">
-                    {open ? '↑ TAP TO CLOSE' : '↓ TAP TO READ MORE'}
-                  </span>
+                  <span className="cb4-wall__expand-hint">↗ TAP TO OPEN</span>
                 </div>
-
-                {open && (
-                  <div className="cb4-wall__expand">
-                    {c.operatorReply
-                      .split('\n')
-                      .filter((l) => l.trim().length > 0)
-                      .map((line, j) => (
-                        <Pill key={j} variant={j % 2 === 0 ? 'yellow' : 'cream'} size="sm" className="cb4-wall__expand-line">
-                          {line}
-                        </Pill>
-                      ))}
-                  </div>
-                )}
               </li>
             );
           })}
@@ -150,6 +136,63 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
           <span className="cb4-wall__dock-label">{confessLabel}</span>
         </button>
       </div>
+
+      {/* Modal overlay — full-screen view of one confession */}
+      {opened && (
+        <div className="cb4-modal" onPointerDown={(e) => { e.preventDefault(); setOpenId(null); }}>
+          <div className="cb4-modal__head">
+            <button
+              type="button"
+              className="cb4-modal__close"
+              onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setOpenId(null); }}
+            >
+              <span>←</span>
+              <span>{closeLabel}</span>
+            </button>
+            <span className="cb4-modal__ticket">{opened.ticketNumber}</span>
+          </div>
+
+          <div className="cb4-modal__body" onPointerDown={(e) => e.stopPropagation()}>
+            <div className="cb4-modal__medallion">
+              <Sunburst
+                colors={SUNBURST_PALETTES[entries.indexOf(opened) % SUNBURST_PALETTES.length]}
+                bg="#0a0a0a"
+                rays={12}
+                className="cb4-wall__medallion-burst"
+              />
+              <span className={`cb4-wall__verdict-dot cb4-wall__verdict-dot--${VERDICT_COLOR[opened.verdict]}`}>
+                {opened.verdict.charAt(0)}
+              </span>
+            </div>
+
+            <div className={`cb4-pill cb4-pill--${VERDICT_COLOR[opened.verdict]} cb4-modal__verdict-pill`}>
+              {VERDICT_WORD[opened.verdict][loc] ?? VERDICT_WORD[opened.verdict].en}
+            </div>
+
+            <div>
+              <span className="cb4-modal__section-label">{t('abs_your')}</span>
+              <div className="cb4-modal__sin-bubble">&ldquo;{opened.sin}&rdquo;</div>
+            </div>
+
+            <div>
+              <span className="cb4-modal__section-label">{t('abs_reply')}</span>
+              <div className="cb4-modal__reply-bubble">
+                {opened.operatorReply
+                  .split('\n')
+                  .filter((l) => l.trim().length > 0)
+                  .map((line, j) => (
+                    <p key={j} className="cb4-modal__reply-line">{line}</p>
+                  ))}
+              </div>
+            </div>
+
+            <div>
+              <span className="cb4-modal__section-label">{t('abs_penance')}</span>
+              <div className="cb4-modal__penance-bubble">{opened.penance}</div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

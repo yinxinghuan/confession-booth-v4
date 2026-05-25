@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import Pill from './Pill';
 import NumberDot from './NumberDot';
+import TopNav from './TopNav';
 import Sunburst from './patterns/Sunburst';
 import { t, getLocale } from '../i18n';
 import type { ProcessingStage } from '../types';
@@ -61,10 +62,7 @@ export default function ProcessingScreenV4({ stage }: Props) {
         className="cb4-proc__pattern"
       />
 
-      <header className="cb4-proc__head">
-        <span className="cb4-proc__head-dot" />
-        <span className="cb4-proc__head-text">{t('meta_call')}</span>
-      </header>
+      <TopNav left={{ kind: 'meta', text: t('meta_call') }} />
 
       {/* Center logo dot — a phone icon. Wobbles during "ringing". */}
       <div className={`cb4-proc__logo ${isRinging ? 'cb4-proc__logo--ring' : ''}`}>
