@@ -18,6 +18,96 @@
 .cb-shell > svg[aria-hidden]:first-of-type { display: none; }
 
 // ---------------------------------------------------------------------------
+//  Page enter animations — each screen mounts with its own entrance
+// ---------------------------------------------------------------------------
+
+.cb4-booth, .cb4-typing, .cb4-proc, .cb4-abs, .cb4-wall {
+  animation-duration: 360ms;
+  animation-timing-function: cubic-bezier(0.45, 0.05, 0.5, 0.95);
+  animation-fill-mode: backwards;
+}
+
+// Booth: punch in (scale + fade) — bold poster reveal
+.cb4-booth { animation-name: cb4-screen-punch; }
+@keyframes cb4-screen-punch {
+  0%   { opacity: 0; transform: scale(0.94); }
+  60%  { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 1; transform: scale(1); }
+}
+// staggered children that pop in
+.cb4-booth__plate-btn {
+  animation: cb4-pop-in 480ms cubic-bezier(0.4, 1.4, 0.55, 1) 100ms backwards;
+}
+@keyframes cb4-pop-in {
+  0%   { transform: scale(0.6) rotate(-12deg); opacity: 0; }
+  70%  { transform: scale(1.05) rotate(-1deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-3deg); opacity: 1; }
+}
+
+// Typing: slide-up reveal
+.cb4-typing { animation-name: cb4-screen-up; }
+@keyframes cb4-screen-up {
+  0%   { opacity: 0; transform: translateY(24px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+// Processing: zoom sunburst from center
+.cb4-proc { animation-name: cb4-screen-zoom; animation-duration: 480ms; }
+@keyframes cb4-screen-zoom {
+  0%   { opacity: 0; transform: scale(0.6); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+// Absolution: arc opens like a curtain
+.cb4-abs { animation-name: cb4-screen-curtain; animation-duration: 500ms; }
+@keyframes cb4-screen-curtain {
+  0%   { opacity: 0; transform: scale(0.96) translateY(8px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+// Verdict pill slams in dramatically — the emotional peak
+.cb4-abs__verdict-pill {
+  animation: cb4-verdict-slam 540ms cubic-bezier(0.32, 0.7, 0.4, 1.3) 200ms backwards !important;
+}
+@keyframes cb4-verdict-slam {
+  0%   { transform: scale(2.2) rotate(-8deg); opacity: 0; }
+  60%  { transform: scale(1.08) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+// Wall: cascade card stagger
+.cb4-wall { animation-name: cb4-screen-fade; }
+@keyframes cb4-screen-fade {
+  0%   { opacity: 0; }
+  100% { opacity: 1; }
+}
+.cb4-wall__card {
+  animation: cb4-card-in 460ms cubic-bezier(0.4, 1.3, 0.55, 1) backwards;
+  &:nth-child(1) { animation-delay: 60ms; }
+  &:nth-child(2) { animation-delay: 110ms; }
+  &:nth-child(3) { animation-delay: 160ms; }
+  &:nth-child(4) { animation-delay: 210ms; }
+  &:nth-child(5) { animation-delay: 260ms; }
+  &:nth-child(6) { animation-delay: 310ms; }
+}
+@keyframes cb4-card-in {
+  0%   { opacity: 0; transform: scale(0.6) rotate(0); }
+  70%  { opacity: 1; transform: scale(1.05) rotate(0); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.cb4-wall__card:nth-child(odd) { animation-name: cb4-card-in-left; }
+.cb4-wall__card:nth-child(even) { animation-name: cb4-card-in-right; }
+@keyframes cb4-card-in-left {
+  0%   { opacity: 0; transform: scale(0.6) rotate(8deg); }
+  70%  { opacity: 1; transform: scale(1.05) rotate(-3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-1.5deg); }
+}
+@keyframes cb4-card-in-right {
+  0%   { opacity: 0; transform: scale(0.6) rotate(-8deg); }
+  70%  { opacity: 1; transform: scale(1.05) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(1.5deg); }
+}
+
+// ---------------------------------------------------------------------------
 //  Pill chip
 // ---------------------------------------------------------------------------
 

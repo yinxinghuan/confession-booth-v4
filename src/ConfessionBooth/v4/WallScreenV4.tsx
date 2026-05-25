@@ -4,6 +4,7 @@ import TopNav from './TopNav';
 import Sunburst from './patterns/Sunburst';
 import Confetti from './Confetti';
 import { t, getLocale } from '../i18n';
+import { playPop, playClick, playTap, playPing } from '../utils/audio';
 import type { Confession, Verdict } from '../types';
 
 interface Props {
@@ -74,7 +75,7 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
         className="cb4-wall__confetti"
       />
 
-      <TopNav left={{ kind: 'back', label: backLabel, onBack }} />
+      <TopNav left={{ kind: 'back', label: backLabel, onBack: () => { playTap(); onBack(); } }} />
 
       <header className="cb4-wall__title-row">
         <h1 className="cb4-wall__title">{title}</h1>
@@ -98,6 +99,7 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
                 className="cb4-wall__card"
                 onPointerDown={(e) => {
                   e.preventDefault();
+                  playPop();
                   setOpenId(c.id);
                 }}
               >
@@ -131,7 +133,7 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
       )}
 
       <div className="cb4-wall__dock">
-        <button type="button" className="cb4-wall__dock-primary" onPointerDown={(e) => { e.preventDefault(); onConfess(); }}>
+        <button type="button" className="cb4-wall__dock-primary" onPointerDown={(e) => { e.preventDefault(); playPing(); onConfess(); }}>
           <span className="cb4-wall__dock-arrow">→</span>
           <span className="cb4-wall__dock-label">{confessLabel}</span>
         </button>
@@ -139,12 +141,12 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
 
       {/* Modal overlay — full-screen view of one confession */}
       {opened && (
-        <div className="cb4-modal" onPointerDown={(e) => { e.preventDefault(); setOpenId(null); }}>
+        <div className="cb4-modal" onPointerDown={(e) => { e.preventDefault(); playClick(); setOpenId(null); }}>
           <div className="cb4-modal__head">
             <button
               type="button"
               className="cb4-modal__close"
-              onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); setOpenId(null); }}
+              onPointerDown={(e) => { e.preventDefault(); e.stopPropagation(); playClick(); setOpenId(null); }}
             >
               <span>←</span>
               <span>{closeLabel}</span>

@@ -5,7 +5,7 @@ import ArrowChip from './ArrowChip';
 import TopNav from './TopNav';
 import RainbowArc from './patterns/RainbowArc';
 import { t, getLocale } from '../i18n';
-import { playStampThud } from '../utils/audio';
+import { playStampThud, playVerdict, playTap, playPing } from '../utils/audio';
 import type { Confession, Verdict } from '../types';
 
 interface Props {
@@ -42,8 +42,10 @@ const WALL: Record<string, string> = { en: 'WALL', zh: '墙', es: 'MURO', pt: 'M
 export default function AbsolutionScreenV4({ confession, onAnother, onWall, slam }: Props) {
   useEffect(() => {
     if (slam) {
-      const id = setTimeout(() => playStampThud(), 240);
-      return () => clearTimeout(id);
+      // Stamp THUD lands first, then triumphant verdict bell shimmer
+      const t1 = setTimeout(() => playStampThud(), 240);
+      const t2 = setTimeout(() => playVerdict(), 520);
+      return () => { clearTimeout(t1); clearTimeout(t2); };
     }
   }, [slam]);
 
@@ -114,10 +116,10 @@ export default function AbsolutionScreenV4({ confession, onAnother, onWall, slam
 
       {/* Dock: ANOTHER + WALL */}
       <section className="cb4-abs__dock">
-        <button type="button" className="cb4-abs__dock-secondary" onPointerDown={(e) => { e.preventDefault(); onWall(); }}>
+        <button type="button" className="cb4-abs__dock-secondary" onPointerDown={(e) => { e.preventDefault(); playTap(); onWall(); }}>
           {WALL[loc] ?? WALL.en}
         </button>
-        <button type="button" className="cb4-abs__dock-primary" onPointerDown={(e) => { e.preventDefault(); onAnother(); }}>
+        <button type="button" className="cb4-abs__dock-primary" onPointerDown={(e) => { e.preventDefault(); playPing(); onAnother(); }}>
           <span className="cb4-abs__dock-arrow">↻</span>
           <span className="cb4-abs__dock-label">{ANOTHER[loc] ?? ANOTHER.en}</span>
         </button>

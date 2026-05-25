@@ -6,6 +6,7 @@ import TopNav from './TopNav';
 import Zigzag from './patterns/Zigzag';
 import Confetti from './Confetti';
 import { t, getLocale } from '../i18n';
+import { playWhoosh, playTap } from '../utils/audio';
 
 const MAX = 280;
 
@@ -71,6 +72,7 @@ export default function TypingScreenV4({ onSubmit, onBack }: Props) {
       setShowError(t('error_long'));
       return;
     }
+    playWhoosh();
     onSubmit(trimmed);
   };
 
@@ -86,7 +88,7 @@ export default function TypingScreenV4({ onSubmit, onBack }: Props) {
       <Zigzag color="#ff4d8e" accent="#ff7a4a" bg="#0a0a0a" cols={16} className="cb4-typing__pattern" />
       <Confetti width={400} height={840} count={14} colors={['#fce8c8', '#ffd24a']} rRange={[3, 5]} seed={23} className="cb4-typing__confetti" />
 
-      <TopNav left={{ kind: 'back', label: backLabel, onBack }} />
+      <TopNav left={{ kind: 'back', label: backLabel, onBack: () => { playTap(); onBack(); } }} />
 
       <div className="cb4-typing__stack">
         {/* Prompt pill rows (2 rows) */}

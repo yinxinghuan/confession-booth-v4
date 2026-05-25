@@ -4,6 +4,7 @@ import TopNav from './TopNav';
 import Zigzag from './patterns/Zigzag';
 import Confetti from './Confetti';
 import { t, getLocale } from '../i18n';
+import { playPing, playTap } from '../utils/audio';
 
 interface Props {
   weekCount: number;
@@ -78,7 +79,7 @@ export default function BoothScreenV4({ weekCount, onEnter, onWall }: Props) {
 
       <TopNav
         left={{ kind: 'meta', text: 'ALTERU · 1-800-CONFESS' }}
-        right={{ label: wallLabel, onClick: onWall }}
+        right={{ label: wallLabel, onClick: () => { playTap(); onWall(); } }}
       />
 
       {/* The plate IS the ENTER button — tap to enter. Edition dot lives
@@ -88,7 +89,7 @@ export default function BoothScreenV4({ weekCount, onEnter, onWall }: Props) {
         <button
           type="button"
           className="cb4-booth__plate-btn"
-          onPointerDown={(e) => { e.preventDefault(); onEnter(); }}
+          onPointerDown={(e) => { e.preventDefault(); playPing(); onEnter(); }}
         >
           <Wordmark
             word={word}

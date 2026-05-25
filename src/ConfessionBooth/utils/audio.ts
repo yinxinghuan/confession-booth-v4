@@ -174,3 +174,139 @@ export function shutdownAudio(): void {
   stopOnHold();
   stopRing();
 }
+
+// ===========================================================================
+//  v4 UI sounds — Wolność-flavored: short punchy synthesized blips, no
+//  heavy assets. All triggered on user gesture so AudioContext is live.
+// ===========================================================================
+
+/** Soft UI tap "boop" — short low-mid sine. Use on chip taps. */
+export function playTap(): void {
+  const c = ensureCtx();
+  if (!c || !masterGain) return;
+  const t0 = c.currentTime;
+  const osc = c.createOscillator();
+  const g = c.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(680, t0);
+  osc.frequency.exponentialRampToValueAtTime(440, t0 + 0.08);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(0.22, t0 + 0.005);
+  g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.1);
+  osc.connect(g);
+  g.connect(masterGain);
+  osc.start(t0);
+  osc.stop(t0 + 0.12);
+}
+
+/** Higher confirmation "tink" — primary CTA presses. */
+export function playPing(): void {
+  const c = ensureCtx();
+  if (!c || !masterGain) return;
+  const t0 = c.currentTime;
+  const out = masterGain;
+  // Two stacked sine voices a fifth apart → bell-like
+  [880, 1320].forEach((freq, i) => {
+    const osc = c.createOscillator();
+    const g = c.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    g.gain.setValueAtTime(0, t0);
+    g.gain.linearRampToValueAtTime(0.16 - i * 0.04, t0 + 0.005);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.45);
+    osc.connect(g);
+    g.connect(out);
+    osc.start(t0);
+    osc.stop(t0 + 0.5);
+  });
+}
+
+/** Whoosh — used on SEND submission. Filtered noise sweep. */
+export function playWhoosh(): void {
+  const c = ensureCtx();
+  if (!c || !masterGain) return;
+  const t0 = c.currentTime;
+  const dur = 0.42;
+  const buf = c.createBuffer(1, c.sampleRate * dur, c.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) {
+    // White noise with exponential envelope
+    data[i] = (Math.random() - 0.5) * Math.exp(-i / data.length * 1.5);
+  }
+  const noise = c.createBufferSource();
+  noise.buffer = buf;
+  const filter = c.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.Q.value = 1.5;
+  filter.frequency.setValueAtTime(1800, t0);
+  filter.frequency.exponentialRampToValueAtTime(380, t0 + dur);
+  const g = c.createGain();
+  g.gain.setValueAtTime(0.45, t0);
+  g.gain.exponentialRampToValueAtTime(0.001, t0 + dur);
+  noise.connect(filter);
+  filter.connect(g);
+  g.connect(masterGain);
+  noise.start(t0);
+}
+
+/** Verdict reveal — triumphant ascending pentatonic chime. */
+export function playVerdict(): void {
+  const c = ensureCtx();
+  if (!c || !masterGain) return;
+  const t0 = c.currentTime;
+  const out = masterGain;
+  // 5-note ascending arpeggio in F major pentatonic
+  const notes = [349.23, 392.0, 440.0, 523.25, 698.46];
+  notes.forEach((freq, i) => {
+    const start = t0 + i * 0.06;
+    const osc = c.createOscillator();
+    const g = c.createGain();
+    osc.type = 'triangle';
+    osc.frequency.value = freq;
+    g.gain.setValueAtTime(0, start);
+    g.gain.linearRampToValueAtTime(0.22, start + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.001, start + 0.55);
+    osc.connect(g);
+    g.connect(out);
+    osc.start(start);
+    osc.stop(start + 0.6);
+  });
+}
+
+/** Modal open — quick rising pop. */
+export function playPop(): void {
+  const c = ensureCtx();
+  if (!c || !masterGain) return;
+  const t0 = c.currentTime;
+  const osc = c.createOscillator();
+  const g = c.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(440, t0);
+  osc.frequency.exponentialRampToValueAtTime(880, t0 + 0.12);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(0.2, t0 + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.16);
+  osc.connect(g);
+  g.connect(masterGain);
+  osc.start(t0);
+  osc.stop(t0 + 0.18);
+}
+
+/** Modal close — descending micro-pop. */
+export function playClick(): void {
+  const c = ensureCtx();
+  if (!c || !masterGain) return;
+  const t0 = c.currentTime;
+  const osc = c.createOscillator();
+  const g = c.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(660, t0);
+  osc.frequency.exponentialRampToValueAtTime(330, t0 + 0.08);
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(0.16, t0 + 0.005);
+  g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.1);
+  osc.connect(g);
+  g.connect(masterGain);
+  osc.start(t0);
+  osc.stop(t0 + 0.12);
+}
