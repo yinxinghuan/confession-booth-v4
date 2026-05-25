@@ -230,7 +230,8 @@
   border-radius: 999px;
   background: @v4-orange;
   color: @v4-black;
-  font-family: 'Archivo Black', sans-serif;
+  // Bagel Fat One = rounded chunky terminals on arrow glyphs
+  font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
   font-size: 18px;
   line-height: 1;
   box-shadow: 0 0 0 @halo @v4-black;
@@ -362,13 +363,14 @@
   &__arrow {
     background: @v4-pink;
     color: @v4-black;
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 24px;
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-size: 26px;
     padding: 18px 22px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     box-shadow: @halo 0 0 @v4-black;
+    line-height: 1;
   }
   &__label {
     color: @v4-black;
@@ -657,9 +659,11 @@
     }
   }
   &__arrow {
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 14px;
+    // Bagel Fat One renders ← → with chunky rounded terminals
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-size: 16px;
     line-height: 1;
+    transform: translateY(-1px);
   }
 }
 
@@ -706,6 +710,12 @@
     &:active {
       transform: translateY(2px);
       box-shadow: 0 0 0 3px @v4-black, 0 2px 0 #0a0a0a;
+    }
+    // make the close ← arrow round-tipped
+    > span:first-child {
+      font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+      font-size: 16px;
+      line-height: 1;
     }
   }
   &__ticket {
@@ -1057,8 +1067,8 @@
     background: @v4-pink;
     color: @v4-black;
     padding: 14px 20px;
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 22px;
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-size: 24px;
     line-height: 1;
     box-shadow: @halo 0 0 @v4-black;
   }
@@ -1458,8 +1468,8 @@
     background: @v4-pink;
     color: @v4-black;
     padding: 14px 18px;
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 20px;
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-size: 22px;
     line-height: 1;
     box-shadow: @halo 0 0 @v4-black;
   }
@@ -1729,8 +1739,8 @@
     background: @v4-pink;
     color: @v4-black;
     padding: 14px 18px;
-    font-family: 'Archivo Black', sans-serif;
-    font-size: 20px;
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-size: 22px;
     line-height: 1;
     box-shadow: @halo 0 0 @v4-black;
   }
