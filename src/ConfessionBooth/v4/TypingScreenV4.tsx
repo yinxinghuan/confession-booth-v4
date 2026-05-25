@@ -1,32 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import Pill from './Pill';
-import ArrowChip from './ArrowChip';
 import NumberDot from './NumberDot';
 import TopNav from './TopNav';
+import AvatarChip from './AvatarChip';
 import Zigzag from './patterns/Zigzag';
 import Confetti from './Confetti';
 import { t, getLocale } from '../i18n';
 import { playWhoosh, playTap } from '../utils/audio';
+import { currentTheme } from './themes';
+import { useCurrentUser } from './useCurrentUser';
 
 const MAX = 280;
 
-// Per-locale prompt chips, structured as 2 rows. Each chip is one word/phrase
-// with its own pill variant — mirrors Wolność Panel 2's "OGÓLNOPOLSKI /
-// FESTIWAL / NAJLEPSZYCH / SPEKTAKLI / → TWORZONYCH / PRZEZ" multi-row stack.
-type PromptChip = { text: string; variant: 'pink' | 'cream' | 'teal' | 'coral' | 'yellow' | 'lavender' };
-type PromptRow = { chips: PromptChip[]; arrow?: boolean };
-
-// One short prompt row only — leaves the textarea as the visual focus
-const PROMPT_ROWS: Record<string, PromptRow[]> = {
-  en: [{ chips: [{ text: 'WHISPER', variant: 'pink' }, { text: 'YOUR SIN', variant: 'cream' }] }],
-  zh: [{ chips: [{ text: '低声', variant: 'pink' }, { text: '告诉我', variant: 'cream' }] }],
-  es: [{ chips: [{ text: 'SUSURRA', variant: 'pink' }, { text: 'TU PECADO', variant: 'cream' }] }],
-  pt: [{ chips: [{ text: 'SUSSURRE', variant: 'pink' }, { text: 'SEU PECADO', variant: 'cream' }] }],
-  ru: [{ chips: [{ text: 'ШЕПНИ', variant: 'pink' }, { text: 'СВОЙ ГРЕХ', variant: 'cream' }] }],
-  ja: [{ chips: [{ text: 'ささやけ', variant: 'pink' }, { text: 'あなたの罪を', variant: 'cream' }] }],
-  ko: [{ chips: [{ text: '속삭여라', variant: 'pink' }, { text: '당신의 죄를', variant: 'cream' }] }],
-  fr: [{ chips: [{ text: 'CHUCHOTE', variant: 'pink' }, { text: 'TON PÉCHÉ', variant: 'cream' }] }],
-};
+// Festival edition: the prompt comes from the WEEKLY THEME, not a fixed
+// "whisper your sin" line. Displayed as one prominent theme banner.
 
 const SEND: Record<string, string> = {
   en: 'SEND', zh: '发送', es: 'ENVIAR', pt: 'ENVIAR',
@@ -53,9 +39,13 @@ export default function TypingScreenV4({ onSubmit, onBack }: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const loc = getLocale();
-  const prompts = PROMPT_ROWS[loc] ?? PROMPT_ROWS.en;
   const sendLabel = SEND[loc] ?? SEND.en;
   const backLabel = BACK[loc] ?? BACK.en;
+  const theme = currentTheme();
+  const themePrompt = theme.prompt[loc] ?? theme.prompt.en;
+  const themeLabel = theme.label[loc] ?? theme.label.en;
+  const themeHint = theme.hint[loc] ?? theme.hint.en;
+  const { profile } = useCurrentUser();
 
   useEffect(() => {
     const id = setTimeout(() => textareaRef.current?.focus(), 250);
@@ -91,18 +81,10 @@ export default function TypingScreenV4({ onSubmit, onBack }: Props) {
       <TopNav left={{ kind: 'back', label: backLabel, onBack: () => { playTap(); onBack(); } }} />
 
       <div className="cb4-typing__stack">
-        {/* Prompt pill rows (2 rows) */}
-        <div className="cb4-typing__prompts">
-          {prompts.map((row, ri) => (
-            <div key={ri} className="cb4-typing__prompt-row">
-              {row.arrow && <ArrowChip direction="right" variant="orange" />}
-              {row.chips.map((chip, ci) => (
-                <Pill key={ci} variant={chip.variant} size="sm">
-                  {chip.text}
-                </Pill>
-              ))}
-            </div>
-          ))}
+        {/* Weekly theme banner */}
+        <div className="cb4-typing__theme">
+          <div className="cb4-typing__theme-label">{themeLabel}</div>
+          <div className="cb4-typing__theme-prompt">{themePrompt}</div>
         </div>
 
         {/* The textarea — a giant cream pill that breaks the "small pill"
@@ -111,7 +93,7 @@ export default function TypingScreenV4({ onSubmit, onBack }: Props) {
           <textarea
             ref={textareaRef}
             className="cb4-typing__page"
-            placeholder={t('typing_placeholder')}
+            placeholder={themeHint}
             maxLength={MAX + 20}
             value={text}
             onChange={(e) => {
@@ -125,9 +107,17 @@ export default function TypingScreenV4({ onSubmit, onBack }: Props) {
           </div>
         </div>
 
+        {/* "Performing as" identity chip — confessions are public this edition */}
+        {profile && (
+          <div className="cb4-typing__author">
+            <span className="cb4-typing__author-label">PERFORMING AS</span>
+            <AvatarChip user={profile} size="sm" />
+          </div>
+        )}
+
         {showError && (
           <div className="cb4-typing__error-row">
-            <Pill variant="pink" size="sm">{showError}</Pill>
+            <span className="cb4-typing__error-text">{showError}</span>
           </div>
         )}
 

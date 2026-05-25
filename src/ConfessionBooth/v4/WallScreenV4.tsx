@@ -3,8 +3,10 @@ import NumberDot from './NumberDot';
 import TopNav from './TopNav';
 import Sunburst from './patterns/Sunburst';
 import Confetti from './Confetti';
+import AvatarChip from './AvatarChip';
 import { t, getLocale } from '../i18n';
 import { playPop, playClick, playTap, playPing } from '../utils/audio';
+import { currentTheme, currentWeekIndex, THEMES } from './themes';
 import type { Confession, Verdict } from '../types';
 
 interface Props {
@@ -79,6 +81,11 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
 
       <header className="cb4-wall__title-row">
         <h1 className="cb4-wall__title">{title}</h1>
+        <div className="cb4-wall__theme-banner">
+          <span className="cb4-wall__theme-week">WEEK {currentWeekIndex() + 1}</span>
+          <span className="cb4-wall__theme-sep" />
+          <span className="cb4-wall__theme-label">{currentTheme().label[loc] ?? currentTheme().label.en}</span>
+        </div>
       </header>
 
       {!loaded ? (
@@ -116,15 +123,23 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
                 </div>
 
                 <div className="cb4-wall__card-body">
-                  <div className="cb4-wall__card-meta">
-                    <NumberDot value={c.ticketNumber.replace('#', '').split('-')[0]} color="orange" size="sm" />
-                    <span className="cb4-wall__card-anon">{t('wall_anon')}</span>
-                    {i === 0 && <span className="cb4-wall__new-tag">NEW</span>}
-                  </div>
+                  {/* Author identity replaces ANONYMOUS — festival edition */}
+                  <AvatarChip
+                    user={{
+                      userId: c.userId ?? 'unknown',
+                      name: c.userName ?? 'Festival Guest',
+                      avatarUrl: c.userAvatarUrl,
+                    }}
+                    size="sm"
+                  />
                   <div className="cb4-wall__sin-chip">
                     &ldquo;{c.sin}&rdquo;
                   </div>
-                  <span className="cb4-wall__expand-hint">↗ TAP TO OPEN</span>
+                  <div className="cb4-wall__card-meta">
+                    <NumberDot value={c.ticketNumber.replace('#', '').split('-')[0]} color="orange" size="sm" />
+                    {i === 0 && <span className="cb4-wall__new-tag">NEW</span>}
+                    <span className="cb4-wall__expand-hint">↗ OPEN</span>
+                  </div>
                 </div>
               </li>
             );
@@ -165,6 +180,23 @@ export default function WallScreenV4({ entries, loaded, onBack, onConfess }: Pro
               <span className={`cb4-wall__verdict-dot cb4-wall__verdict-dot--${VERDICT_COLOR[opened.verdict]}`}>
                 {opened.verdict.charAt(0)}
               </span>
+            </div>
+
+            {/* Author identity row */}
+            <div className="cb4-modal__author">
+              <AvatarChip
+                user={{
+                  userId: opened.userId ?? 'unknown',
+                  name: opened.userName ?? 'Festival Guest',
+                  avatarUrl: opened.userAvatarUrl,
+                }}
+                size="md"
+              />
+              {opened.weekIndex !== undefined && (
+                <span className="cb4-modal__week-tag">
+                  WEEK {opened.weekIndex + 1} · {(THEMES[opened.weekIndex % THEMES.length].label[loc] ?? THEMES[opened.weekIndex % THEMES.length].label.en)}
+                </span>
+              )}
             </div>
 
             <div className={`cb4-pill cb4-pill--${VERDICT_COLOR[opened.verdict]} cb4-modal__verdict-pill`}>

@@ -108,6 +108,59 @@
 }
 
 // ---------------------------------------------------------------------------
+//  AvatarChip — user identity badge
+// ---------------------------------------------------------------------------
+
+.cb4-avatar {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  background: @v4-cream;
+  color: @v4-black;
+  border-radius: 999px;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 0 0 3px @v4-black;
+  border: 0;
+  -webkit-tap-highlight-color: transparent;
+  max-width: 100%;
+
+  &--btn { cursor: pointer; transition: transform 90ms ease-out; &:active { transform: scale(0.95); } }
+  &--sm { padding: 3px 10px 3px 3px; font-size: 10.5px; }
+  &--md { padding: 4px 12px 4px 4px; font-size: 12px; }
+  &--lg { padding: 6px 16px 6px 6px; font-size: 14px; }
+
+  &__pic {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 2px @v4-black;
+    color: @v4-black;
+    font-family: 'Archivo Black', sans-serif;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  }
+  &--sm &__pic { width: 20px; height: 20px; font-size: 10px; }
+  &--md &__pic { width: 26px; height: 26px; font-size: 12px; }
+  &--lg &__pic { width: 34px; height: 34px; font-size: 14px; }
+  &__initial { line-height: 1; }
+  &__name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 14ch;
+  }
+}
+
+// ---------------------------------------------------------------------------
 //  Pill chip
 // ---------------------------------------------------------------------------
 
@@ -413,9 +466,12 @@
     inset: 0;
     z-index: 4;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    pointer-events: none; // allow children to claim pointer themselves
+    gap: 16px;
+    padding: 0 20px;
+    pointer-events: none;
   }
   &__plate-btn {
     position: relative;
@@ -463,6 +519,60 @@
     font-family: 'IBM Plex Mono', monospace;
     font-size: 9px;
     letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  // Weekly theme banner — below the plate
+  &__theme {
+    position: relative;
+    z-index: 5;
+    margin-top: 16px;
+    padding: 8px 16px 10px;
+    background: @v4-black;
+    color: @v4-cream;
+    border-radius: 18px;
+    box-shadow: 0 0 0 3px @v4-yellow;
+    text-align: center;
+    max-width: 280px;
+  }
+  &__theme-head {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2px;
+  }
+  &__theme-week {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.24em;
+    color: @v4-yellow;
+    text-transform: uppercase;
+  }
+  &__theme-label {
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    color: @v4-yellow;
+  }
+
+  // "PERFORMING AS @user" identity row — sits above the count chip
+  &__you {
+    position: absolute;
+    z-index: 5;
+    bottom: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    max-width: 90%;
+  }
+  &__you-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: fade(@v4-cream, 60%);
     text-transform: uppercase;
   }
 }
@@ -640,6 +750,22 @@
     box-shadow: 0 0 0 4px @v4-black, 0 5px 0 #0a0a0a !important;
   }
 
+  // Author identity row in modal
+  &__author {
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  &__week-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: @v4-yellow;
+    text-transform: uppercase;
+  }
+
   &__section-label {
     display: block;
     font-family: 'IBM Plex Mono', monospace;
@@ -775,18 +901,57 @@
     align-items: stretch;
   }
 
-  &__prompts {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: center;
+  // Theme banner — replaces the generic prompt with the weekly theme
+  &__theme {
+    background: @v4-black;
+    color: @v4-yellow;
+    border-radius: 18px;
+    box-shadow: 0 0 0 3px @v4-yellow;
+    padding: 10px 14px 12px;
+    text-align: center;
   }
-  &__prompt-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+  &__theme-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.24em;
+    color: @v4-yellow;
+    text-transform: uppercase;
+    opacity: 0.85;
+    margin-bottom: 4px;
+  }
+  &__theme-prompt {
+    font-family: 'Bagel Fat One', 'Archivo Black', sans-serif;
+    font-size: 17px;
+    line-height: 1.15;
+    letter-spacing: 0.01em;
+    color: @v4-yellow;
+  }
+
+  // "PERFORMING AS @user" identity row inside the typing stack
+  &__author {
+    display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
+    align-self: center;
+    margin: -4px 0 0;
+  }
+  &__author-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.2em;
+    color: fade(@v4-cream, 75%);
+    text-transform: uppercase;
+  }
+  &__error-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    color: @v4-cream;
+    text-align: center;
+    background: @v4-pink;
+    box-shadow: 0 0 0 3px @v4-black;
+    padding: 6px 14px;
+    border-radius: 999px;
   }
 
   // The big cream textarea pill — the heart of the screen
@@ -1340,8 +1505,10 @@
     flex: 0 0 auto;
     padding: 70px 18px 6px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 8px;
     position: relative;
     z-index: 4;
   }
@@ -1353,6 +1520,36 @@
     letter-spacing: 0.01em;
     color: @v4-cream;
     text-align: center;
+  }
+  &__theme-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 14px;
+    background: @v4-black;
+    color: @v4-yellow;
+    border-radius: 999px;
+    box-shadow: 0 0 0 3px @v4-yellow;
+  }
+  &__theme-week {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    color: @v4-yellow;
+    text-transform: uppercase;
+  }
+  &__theme-sep {
+    width: 4px;
+    height: 4px;
+    background: @v4-yellow;
+    border-radius: 50%;
+  }
+  &__theme-label {
+    font-family: 'Archivo Black', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    color: @v4-yellow;
+    text-transform: uppercase;
   }
 
   &__empty {
@@ -1441,6 +1638,8 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   &__card-anon {
     font-family: 'IBM Plex Mono', monospace;

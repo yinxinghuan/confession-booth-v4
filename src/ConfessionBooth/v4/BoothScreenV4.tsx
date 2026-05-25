@@ -1,10 +1,13 @@
 import NumberDot from './NumberDot';
 import Wordmark from './Wordmark';
 import TopNav from './TopNav';
+import AvatarChip from './AvatarChip';
 import Zigzag from './patterns/Zigzag';
 import Confetti from './Confetti';
 import { t, getLocale } from '../i18n';
 import { playPing, playTap } from '../utils/audio';
+import { currentTheme, currentWeekIndex } from './themes';
+import { useCurrentUser } from './useCurrentUser';
 
 interface Props {
   weekCount: number;
@@ -23,7 +26,7 @@ const WORDMARK: Record<string, string> = {
   fr: 'CONFESSE',
 };
 
-const SUB: Record<string, string> = {
+const TAP_TO_BEGIN: Record<string, string> = {
   en: 'TAP TO BEGIN',
   zh: '点击开始',
   es: 'TOCA PARA EMPEZAR',
@@ -31,38 +34,33 @@ const SUB: Record<string, string> = {
   ru: 'НАЖМИ ДЛЯ СТАРТА',
   ja: 'タップ',
   ko: '눌러서 시작',
-  fr: 'APPUYE POUR COMMENCER',
+  fr: 'APPUYE',
 };
 
 const WALL_LABEL: Record<string, string> = {
-  en: 'WALL',
-  zh: '墙',
-  es: 'MURO',
-  pt: 'MURO',
-  ru: 'СТЕНА',
-  ja: '壁',
-  ko: '벽',
-  fr: 'MUR',
+  en: 'WALL', zh: '墙', es: 'MURO', pt: 'MURO',
+  ru: 'СТЕНА', ja: '壁', ko: '벽', fr: 'MUR',
 };
 
-// Booth = Wolność Panel 1 layout. The whole screen IS one poster:
-//   - Single full-bleed zigzag pattern
-//   - Curvy CONFESS wordmark plate centered
-//   - Edition NumberDot overlapping plate
-//
-// Functionality is folded INTO this composition, not stacked beside it:
-//   - The plate ITSELF is the primary CTA (tap to enter booth)
-//   - Wall navigation is a tiny corner chip — doesn't compete with the
-//     poster
-//   - Week count lives inside the edition dot context (small dot tucked
-//     under the main one)
+const THIS_WEEK: Record<string, string> = {
+  en: 'THIS WEEK · WEEK', zh: '本周题 · 第', es: 'ESTA SEMANA · SEMANA',
+  pt: 'ESTA SEMANA · SEM', ru: 'ЭТА НЕДЕЛЯ', ja: '今週のテーマ · 第',
+  ko: '이번 주 · 주차', fr: 'CETTE SEMAINE · SEM',
+};
+
 export default function BoothScreenV4({ weekCount, onEnter, onWall }: Props) {
   const loc = getLocale();
   const word = WORDMARK[loc] ?? WORDMARK.en;
-  const sub = SUB[loc] ?? SUB.en;
+  const sub = TAP_TO_BEGIN[loc] ?? TAP_TO_BEGIN.en;
   const wallLabel = WALL_LABEL[loc] ?? WALL_LABEL.en;
   const isCJK = ['zh', 'ja', 'ko'].includes(loc);
   const wordSize = isCJK ? 62 : 78;
+
+  const theme = currentTheme();
+  const themeLabel = theme.label[loc] ?? theme.label.en;
+  const weekIdx = currentWeekIndex();
+
+  const { profile } = useCurrentUser();
 
   return (
     <div className="cb4-booth">
@@ -78,13 +76,11 @@ export default function BoothScreenV4({ weekCount, onEnter, onWall }: Props) {
       />
 
       <TopNav
-        left={{ kind: 'meta', text: 'ALTERU · 1-800-CONFESS' }}
+        left={{ kind: 'meta', text: 'ALTERU · FESTIVAL EDITION' }}
         right={{ label: wallLabel, onClick: () => { playTap(); onWall(); } }}
       />
 
-      {/* The plate IS the ENTER button — tap to enter. Edition dot lives
-          INSIDE the plate-btn so it positions relative to the plate not
-          the full-screen center wrapper. */}
+      {/* Centered plate + theme banner stack */}
       <div className="cb4-booth__center">
         <button
           type="button"
@@ -102,9 +98,26 @@ export default function BoothScreenV4({ weekCount, onEnter, onWall }: Props) {
           />
           <NumberDot value="7" color="orange" size="lg" className="cb4-booth__edition" />
         </button>
+
+        {/* Weekly theme banner — defines the prompt for this week */}
+        <div className="cb4-booth__theme">
+          <div className="cb4-booth__theme-head">
+            <span className="cb4-booth__theme-week">{THIS_WEEK[loc] ?? THIS_WEEK.en} {weekIdx + 1}</span>
+          </div>
+          <div className="cb4-booth__theme-label">{themeLabel}</div>
+        </div>
       </div>
 
-      {/* Week count — small medal at the bottom edge, balances the comp */}
+      {/* User identity badge at bottom — you ARE performing here */}
+      {profile && (
+        <div className="cb4-booth__you">
+          <AvatarChip user={profile} size="md" />
+          <span className="cb4-booth__you-label">
+            {profile.userId === 'guest' ? 'AS A GUEST' : 'PERFORMING AS'}
+          </span>
+        </div>
+      )}
+
       <div className="cb4-booth__count">
         <NumberDot value={weekCount.toLocaleString()} color="orange" size="sm" />
         <span className="cb4-booth__count-label">

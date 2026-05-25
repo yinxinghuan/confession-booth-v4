@@ -10,6 +10,13 @@ export interface Confession {
   ticketNumber: string; // "#4827"
   callDuration: string; // "00:42"
   createdAt: number;
+  // v4 additions — public festival edition
+  /** Aigram user id who confessed (null = guest / fallback) */
+  userId?: string;
+  userName?: string;
+  userAvatarUrl?: string;
+  /** Theme week index (0-based, cycles through THEMES) */
+  weekIndex?: number;
 }
 
 export type Phase = 'booth' | 'typing' | 'processing' | 'absolution' | 'wall';

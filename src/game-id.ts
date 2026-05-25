@@ -5,4 +5,4 @@
 // browser's window so the @shared/runtime/getGameUuid() resolver can
 // pick it up. main.tsx must import this file once at boot.
 
-(window as any).__GAME_UUID__ = 'd50286e6-d7e7-4a0b-afbd-5af7d598a4b8';
+(window as any).__GAME_UUID__ = '55fa014e-60f7-44df-b5b0-b5b1c0f899fb';

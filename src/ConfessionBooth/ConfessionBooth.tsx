@@ -16,6 +16,8 @@ import type { ConfessionSave } from './hooks/useWall';
 import { getDemoConfession, getDemoWall } from './utils/demo';
 import { parseAbsolution } from './utils/prompts';
 import { newConfessionId, newTicketNumber, fakeCallDuration } from './utils/ticket';
+import { currentWeekIndex } from './v4/themes';
+import { useCurrentUser } from './v4/useCurrentUser';
 import {
   startOnHold,
   stopOnHold,
@@ -43,6 +45,7 @@ export default function ConfessionBooth() {
   const [touched, setTouched] = useState(false);
 
   const { generate, loading, stage, error } = useConfess();
+  const { profile } = useCurrentUser();
   const { entries: cloudEntries, loaded: wallLoaded, refresh: refreshWall } = useWall();
   const save = useGameSave<ConfessionSave>(GAME_ID);
 
@@ -98,10 +101,17 @@ export default function ConfessionBooth() {
   const submitSin = useCallback(
     async (text: string) => {
       setPhase('processing');
+      // attach festival identity + theme to every confession (v4 public edition)
+      const stamp = (c: Confession): Confession => ({
+        ...c,
+        userId: profile?.userId,
+        userName: profile?.name,
+        userAvatarUrl: profile?.avatarUrl,
+        weekIndex: currentWeekIndex(),
+      });
       try {
-        const c = await generate(text);
+        const c = stamp(await generate(text));
         setConfession(c);
-        // Persist to cloud + local: prepend the new confession (newest first)
         setLocalHistory((prev) => {
           const next = [c, ...prev].slice(0, 30);
           save.persist({ confessions: next });
@@ -109,10 +119,8 @@ export default function ConfessionBooth() {
         });
         setPhase('absolution');
       } catch (e) {
-        // On error: fall back to a deterministic absolution from the local
-        // fallback pool so the user still gets a receipt.
         const fb = parseAbsolution('');
-        const c: Confession = {
+        const c = stamp({
           id: newConfessionId(),
           sin: text,
           operatorReply: fb.reply,
@@ -122,7 +130,7 @@ export default function ConfessionBooth() {
           ticketNumber: newTicketNumber(),
           callDuration: fakeCallDuration(),
           createdAt: Date.now(),
-        };
+        });
         setConfession(c);
         setLocalHistory((prev) => {
           const next = [c, ...prev].slice(0, 30);
@@ -132,7 +140,7 @@ export default function ConfessionBooth() {
         setPhase('absolution');
       }
     },
-    [generate, save],
+    [generate, save, profile],
   );
 
   const back = useCallback(() => {
